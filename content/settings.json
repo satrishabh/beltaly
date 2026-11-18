@@ -32,9 +32,9 @@
   "liveRefresh": false,
   "liveRefreshUrl": "",
   "colours": {
-    "leather": "#8B5A2B",
-    "cream": "#F7F1E8",
-    "espresso": "#2B1A12",
-    "brass": "#C9A227"
+    "leather": "#C9A24A",
+    "cream": "#F3EEE4",
+    "espresso": "#070605",
+    "brass": "#E6CD85"
   }
 }

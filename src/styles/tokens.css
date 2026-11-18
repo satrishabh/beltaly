@@ -1,1 +1,37 @@
-:root{--leather:#8B5A2B;--espresso:#2B1A12;--cream:#F7F1E8;--brass:#C9A227;--indigo:#343C62;--muted:#746557;--line:#d8cbb9;--paper:#fffaf2;--serif:Georgia,'Times New Roman',serif;--sans:Inter,'Noto Sans Devanagari',system-ui,sans-serif;--radius:3px;--page:1320px}
+/* Beltaly design tokens: black and gold, matching the Beltaly logo.
+   Structure follows Sarvaikam's token system (canvas / surface / ink / line / accent roles);
+   values are Beltaly's black and gold brand palette.
+   Layout.astro maps settings.colours onto these: espresso → --bg, cream → --ink,
+   leather → --accent, brass → --brass. */
+:root {
+  color-scheme: dark;
+  --bg: #070605;
+  --surface: #110f0b;
+  --surface-2: #191610;
+  --surface-3: #221e16;
+  --ink: #f3eee4;
+  --ink-muted: #b8ad98;
+  --ink-subtle: #8c826f;
+  --line: #2b261c;
+  --line-strong: #463d2b;
+  --accent: #c9a24a;
+  --accent-strong: #e2c06a;
+  --accent-soft: #2e2610;
+  --on-accent: #0a0804;
+  --brass: #e6cd85;
+  --brass-soft: #34301c;
+  --success: #7fcf98;
+  --danger: #ff8a8a;
+  --shadow: 0 28px 80px rgb(0 0 0 / .55);
+
+  --sans: Archivo, Inter, 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --serif: 'Trajan Pro', Cinzel, 'Cormorant Garamond', 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --serif-text: 'Cormorant Garamond', 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --mono: 'IBM Plex Mono', 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
+
+  --radius-control: 8px;
+  --radius-card: 14px;
+  --radius-sheet: 20px;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --page: 1320px;
+}
