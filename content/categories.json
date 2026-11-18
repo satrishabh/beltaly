@@ -1,0 +1,32 @@
+[
+  {
+    "id": "formal",
+    "name": "Formal",
+    "description": "For the everyday professional"
+  },
+  {
+    "id": "casual",
+    "name": "Casual",
+    "description": "Off-duty, well put together"
+  },
+  {
+    "id": "ethnic",
+    "name": "Ethnic & Wedding",
+    "description": "A little occasion, a lot of character"
+  },
+  {
+    "id": "reversible",
+    "name": "Reversible",
+    "description": "Two sides. More possibilities."
+  },
+  {
+    "id": "kids",
+    "name": "Kids",
+    "description": "Little adventures, perfect fit"
+  },
+  {
+    "id": "gifts",
+    "name": "Gift Sets",
+    "description": "Thoughtfully put together"
+  }
+]

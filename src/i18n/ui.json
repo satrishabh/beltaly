@@ -1,0 +1,270 @@
+{
+  "The occasion edit": {
+    "en": "The occasion edit",
+    "hi": "खास मौकों का कलेक्शन"
+  },
+  "Explore": {
+    "en": "Explore",
+    "hi": "देखें"
+  },
+  "Here to help": {
+    "en": "Here to help",
+    "hi": "आपकी मदद के लिए"
+  },
+  "The fine print": {
+    "en": "The fine print",
+    "hi": "ज़रूरी जानकारी"
+  },
+  "Category": {
+    "en": "Category",
+    "hi": "श्रेणी"
+  },
+  "All categories": {
+    "en": "All categories",
+    "hi": "सभी श्रेणियाँ"
+  },
+  "Material": {
+    "en": "Material",
+    "hi": "सामग्री"
+  },
+  "All": {
+    "en": "All",
+    "hi": "सभी"
+  },
+  "Width (mm)": {
+    "en": "Width (mm)",
+    "hi": "चौड़ाई (मिमी)"
+  },
+  "Buckle": {
+    "en": "Buckle",
+    "hi": "बकल"
+  },
+  "Maximum price (₹)": {
+    "en": "Maximum price (₹)",
+    "hi": "अधिकतम कीमत (₹)"
+  },
+  "Clear filters": {
+    "en": "Clear filters",
+    "hi": "फ़िल्टर हटाएँ"
+  },
+  "Sort": {
+    "en": "Sort",
+    "hi": "क्रम"
+  },
+  "Featured": {
+    "en": "Featured",
+    "hi": "चुनिंदा"
+  },
+  "Price: low to high": {
+    "en": "Price: low to high",
+    "hi": "कीमत: कम से ज़्यादा"
+  },
+  "Price: high to low": {
+    "en": "Price: high to low",
+    "hi": "कीमत: ज़्यादा से कम"
+  },
+  "Name: A–Z": {
+    "en": "Name: A–Z",
+    "hi": "नाम: A–Z"
+  },
+  "Formal": {
+    "en": "Formal",
+    "hi": "फ़ॉर्मल"
+  },
+  "Casual": {
+    "en": "Casual",
+    "hi": "कैज़ुअल"
+  },
+  "Ethnic & Wedding": {
+    "en": "Ethnic & Wedding",
+    "hi": "पारंपरिक और शादी"
+  },
+  "Reversible": {
+    "en": "Reversible",
+    "hi": "दोनों तरफ पहनने योग्य"
+  },
+  "Kids": {
+    "en": "Kids",
+    "hi": "बच्चों के लिए"
+  },
+  "Gift Sets": {
+    "en": "Gift Sets",
+    "hi": "गिफ़्ट सेट"
+  },
+  "The details": {
+    "en": "The details",
+    "hi": "ऑर्डर का विवरण"
+  },
+  "Subtotal": {
+    "en": "Subtotal",
+    "hi": "उप-योग"
+  },
+  "Shipping": {
+    "en": "Shipping",
+    "hi": "शिपिंग"
+  },
+  "COD charge": {
+    "en": "COD charge",
+    "hi": "COD शुल्क"
+  },
+  "Total": {
+    "en": "Total",
+    "hi": "कुल"
+  },
+  "Name": {
+    "en": "Name",
+    "hi": "नाम"
+  },
+  "Mobile number": {
+    "en": "Mobile number",
+    "hi": "मोबाइल नंबर"
+  },
+  "Delivery address": {
+    "en": "Delivery address",
+    "hi": "डिलीवरी का पता"
+  },
+  "Pincode": {
+    "en": "Pincode",
+    "hi": "पिनकोड"
+  },
+  "How would you like to order?": {
+    "en": "How would you like to order?",
+    "hi": "आप कैसे ऑर्डर करना चाहेंगे?"
+  },
+  "Order on WhatsApp": {
+    "en": "Order on WhatsApp",
+    "hi": "WhatsApp पर ऑर्डर करें"
+  },
+  "Pay with UPI": {
+    "en": "Pay with UPI",
+    "hi": "UPI से भुगतान करें"
+  },
+  "Open payment link": {
+    "en": "Open payment link",
+    "hi": "भुगतान लिंक खोलें"
+  },
+  "Cash on Delivery (confirm on WhatsApp)": {
+    "en": "Cash on Delivery (confirm on WhatsApp)",
+    "hi": "कैश ऑन डिलीवरी (WhatsApp पर पुष्टि करें)"
+  },
+  "Prepare order ↗": {
+    "en": "Prepare order ↗",
+    "hi": "ऑर्डर तैयार करें ↗"
+  },
+  "Remove": {
+    "en": "Remove",
+    "hi": "हटाएँ"
+  },
+  "Material & care": {
+    "en": "Material & care",
+    "hi": "सामग्री और देखभाल"
+  },
+  "Shipping & returns": {
+    "en": "Shipping & returns",
+    "hi": "शिपिंग और वापसी"
+  },
+  "Quick size calculator": {
+    "en": "Quick size calculator",
+    "hi": "साइज़ कैलकुलेटर"
+  },
+  "Waist (inches)": {
+    "en": "Waist (inches)",
+    "hi": "कमर (इंच)"
+  },
+  "Your waist measurement": {
+    "en": "Your waist measurement",
+    "hi": "आपकी कमर का माप"
+  },
+  "Inches": {
+    "en": "Inches",
+    "hi": "इंच"
+  },
+  "Centimetres": {
+    "en": "Centimetres",
+    "hi": "सेंटीमीटर"
+  },
+  "Find my size": {
+    "en": "Find my size",
+    "hi": "मेरा साइज़ बताएँ"
+  },
+  "Search by name, material, colour or occasion": {
+    "en": "Search by name, material, colour or occasion",
+    "hi": "नाम, सामग्री, रंग या मौके से खोजें"
+  },
+  "Close ×": {
+    "en": "Close ×",
+    "hi": "बंद करें ×"
+  },
+  "Your bag.": {
+    "en": "Your bag.",
+    "hi": "आपका बैग।"
+  },
+  "No belts match those filters. Try a different combination.": {
+    "en": "No belts match those filters. Try a different combination.",
+    "hi": "इन फ़िल्टर से कोई बेल्ट नहीं मिली। दूसरे विकल्प चुनें।"
+  },
+  "Colour": {
+    "en": "Colour",
+    "hi": "रंग"
+  },
+  "Size": {
+    "en": "Size",
+    "hi": "साइज़"
+  },
+  "genuine leather": {
+    "en": "genuine leather",
+    "hi": "असली चमड़ा"
+  },
+  "vegan": {
+    "en": "vegan",
+    "hi": "वीगन"
+  },
+  "canvas": {
+    "en": "canvas",
+    "hi": "कैनवस"
+  },
+  "braided": {
+    "en": "braided",
+    "hi": "बुनी हुई"
+  },
+  "Tan": {
+    "en": "Tan",
+    "hi": "टैन"
+  },
+  "Black": {
+    "en": "Black",
+    "hi": "काला"
+  },
+  "Brown": {
+    "en": "Brown",
+    "hi": "भूरा"
+  },
+  "Cognac": {
+    "en": "Cognac",
+    "hi": "कॉन्यैक"
+  },
+  "brass pin": {
+    "en": "brass pin",
+    "hi": "पीतल पिन"
+  },
+  "silver pin": {
+    "en": "silver pin",
+    "hi": "सिल्वर पिन"
+  },
+  "frame": {
+    "en": "frame",
+    "hi": "फ़्रेम"
+  },
+  "Any price": {
+    "en": "Any price",
+    "hi": "कोई भी कीमत"
+  },
+  "6-digit pincode": {
+    "en": "6-digit pincode",
+    "hi": "6 अंकों का पिनकोड"
+  },
+  "10 digits": {
+    "en": "10 digits",
+    "hi": "10 अंक"
+  }
+}

@@ -1,0 +1,13 @@
+[
+  {
+    "id": "bestsellers",
+    "name": "The everyday favourites",
+    "description": "Considered details. Effortless wear.",
+    "productIds": [
+      "BLT-001",
+      "BLT-003",
+      "BLT-013",
+      "BLT-021"
+    ]
+  }
+]

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*.local
+test-results/
+.npm-cache/
+node.exe
+.install-backup/
+.install-backup-2/
+.node_modules-stale-3/
+.verify/

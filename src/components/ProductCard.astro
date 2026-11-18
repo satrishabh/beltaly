@@ -1,0 +1,7 @@
+---
+import type {Product} from '../data/providers/types';
+import {money,productUrl,imageUrl} from '../lib/format';
+const swatchColours:Record<string,string>={Tan:'#a16b3e',Black:'#302b28',Brown:'#65422c',Cognac:'#a34f2c'};
+const {product:p,cloud=''}=Astro.props as {product:Product;cloud?:string};
+---
+<article class="product-card" data-product={p.id} data-category={p.category} data-material={p.material} data-colour={p.colour} data-width={p.width} data-buckle={p.buckle} data-price={p.price} data-name={p.name} data-stock={p.stock}><a href={productUrl(p)}><div class="product-image"><img src={imageUrl(p.images[0],cloud)} alt={`${p.name}, ${p.colour} ${p.material} belt`} width="600" height="600" loading="lazy"/>{(p.badge||!p.stock)&&<span class="badge">{!p.stock?'OUT OF STOCK':p.badge}</span>}</div><p class="product-meta">{p.material} · {p.width} mm</p><h3>{p.name}</h3><div class="price">{money(p.price)} <del>{money(p.mrp)}</del></div><div aria-label={p.colour}><span class="swatch" style={`background:${swatchColours[p.colour]||'#8B5A2B'}`}></span><span class="hint">{p.colour}</span></div></a></article>

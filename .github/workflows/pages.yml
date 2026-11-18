@@ -1,0 +1,56 @@
+name: Build and publish static storefront
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '30 1 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: |
+          npm run build
+          node scripts/check-build.mjs
+          if [ -n "$CUSTOM_DOMAIN" ]; then echo "$CUSTOM_DOMAIN" > dist/CNAME; fi
+        env:
+          # Set repository variable CUSTOM_DOMAIN (e.g. beltaly.in) once Hostinger DNS points to GitHub.
+          # Without it the site is served from https://<owner>.github.io/<repo>/.
+          CUSTOM_DOMAIN: ${{ vars.CUSTOM_DOMAIN }}
+          SITE_URL: ${{ vars.CUSTOM_DOMAIN && format('https://{0}', vars.CUSTOM_DOMAIN) || format('https://{0}.github.io', github.repository_owner) }}
+          BASE_PATH: ${{ vars.CUSTOM_DOMAIN && '/' || format('/{0}', github.event.repository.name) }}
+          DATA_PROVIDER: ${{ vars.DATA_PROVIDER || 'local-json' }}
+          SHEETS_PRODUCTS_URL: ${{ vars.SHEETS_PRODUCTS_URL }}
+          SHEETS_CATEGORIES_URL: ${{ vars.SHEETS_CATEGORIES_URL }}
+          SHEETS_COLLECTIONS_URL: ${{ vars.SHEETS_COLLECTIONS_URL }}
+          SHEETS_BANNERS_URL: ${{ vars.SHEETS_BANNERS_URL }}
+          SHEETS_SETTINGS_URL: ${{ vars.SHEETS_SETTINGS_URL }}
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,40 @@
+{
+  "name": "beltaly",
+  "logo": "",
+  "tagline": "Good things come full circle.",
+  "announcement": "A better fit for every day. Free shipping on orders above ₹1,999.",
+  "whatsapp": "",
+  "upiVpa": "",
+  "payeeName": "Beltaly",
+  "gstin": "",
+  "shippingFee": 79,
+  "freeShippingAbove": 1999,
+  "codCharge": 49,
+  "pincodes": [
+    "110001",
+    "400001",
+    "560001",
+    "600001",
+    "700001",
+    "411001",
+    "500001",
+    "226001"
+  ],
+  "methods": {
+    "whatsapp": true,
+    "upi": true,
+    "paymentLink": false,
+    "cod": true
+  },
+  "paymentLink": "",
+  "instagram": "",
+  "cloudinaryCloud": "",
+  "liveRefresh": false,
+  "liveRefreshUrl": "",
+  "colours": {
+    "leather": "#8B5A2B",
+    "cream": "#F7F1E8",
+    "espresso": "#2B1A12",
+    "brass": "#C9A227"
+  }
+}
