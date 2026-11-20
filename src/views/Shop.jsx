@@ -22,22 +22,28 @@ export default function Shop({ query, saved, onToggleSaved }) {
   }
 
   const clear = () => navigate(href('shop', filters.category ? { category: filters.category } : undefined), { replace: true });
-  const categoryName = categories.find((category) => category.id === filters.category)?.name;
+  const currentCategory = categories.find((category) => category.id === filters.category);
+  const categoryName = currentCategory?.name;
   // Filter values are raw data ("plate", "Black"); show them with the same wording as product pages.
   const cap = (text) => String(text).replace(/^./, (c) => c.toUpperCase());
   const valueLabel = (name, value) => t(name === 'buckle' ? `${cap(value)} buckle` : cap(value));
   const label = (key) => (key === 'q' ? `“${filters.q}”` : key === 'max' ? t('Under ₹{amount}', { amount: filters.max }) : valueLabel(key, filters[key]));
 
   return (
-    <div className="wrap shop-page">
-      <header className="page-head">
-        <nav className="breadcrumb" aria-label={t('Breadcrumb')}><a href={href('')}>{t('Home')}</a> › <span>{categoryName ? t(categoryName) : t('Belts')}</span></nav>
-        <h1>{filters.q ? t('Results for “{query}”', { query: filters.q }) : categoryName ? t(categoryName) : t('All belts')}</h1>
-        <div className="chip-row">
+    <div className="shop-page">
+      <header className="page-head shop-hero">
+        <div className="wrap shop-hero-inner">
+          <nav className="breadcrumb" aria-label={t('Breadcrumb')}><a href={href('')}>{t('Home')}</a> › <span>{categoryName ? t(categoryName) : t('Belts')}</span></nav>
+          <p className="lux-kicker">{t('Genuine leather belts')}</p>
+          <h1>{filters.q ? t('Results for “{query}”', { query: filters.q }) : categoryName ? t(categoryName) : t('All belts')}</h1>
+          {currentCategory?.description && !filters.q && <p className="shop-hero-lead">{t(currentCategory.description)}</p>}
+        </div>
+      </header>
+      <div className="wrap">
+        <div className="chip-row shop-tabs">
           <button className={!filters.category ? 'chip is-selected' : 'chip'} onClick={() => update('category', '')}>{t('All')}</button>
           {categories.map((category) => <button key={category.id} className={filters.category === category.id ? 'chip is-selected' : 'chip'} onClick={() => update('category', category.id)}>{t(category.name)}</button>)}
         </div>
-      </header>
 
       <form className="toolbar" onSubmit={(event) => event.preventDefault()} aria-label={t('Filter and sort belts')}>
         {filterFields.map((field) => (
@@ -73,6 +79,7 @@ export default function Shop({ query, saved, onToggleSaved }) {
       {results.length > 0
         ? <ProductGrid items={results} saved={saved} onToggleSaved={onToggleSaved} className="shop-products" />
         : <div className="empty panel"><p>{t('No belts match those filters. Try a different combination.')}</p><button className="btn secondary" onClick={clear}>{t('Clear filters')}</button></div>}
+      </div>
     </div>
   );
 }
