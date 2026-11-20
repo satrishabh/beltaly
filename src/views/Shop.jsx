@@ -1,10 +1,10 @@
 import { categories, filterFields, matchesFilters, matchesSearch, products, sorters } from '../catalog.js';
 import { useT } from '../i18n.js';
-import { ProductGrid, href } from './shared.jsx';
+import { ProductGrid, href, navigate } from './shared.jsx';
 
 const FILTER_KEYS = ['q', 'category', ...filterFields.map((field) => field.name), 'max', 'sort'];
 
-// All filter state lives in the URL (#/shop?category=formal&material=canvas&sort=price-asc), so it is shareable.
+// All filter state lives in the URL (/shop?category=formal&sort=price-asc), so it is shareable.
 export default function Shop({ query, saved, onToggleSaved }) {
   const t = useT();
   const filters = Object.fromEntries(FILTER_KEYS.map((key) => [key, query.get(key) || '']));
@@ -14,13 +14,11 @@ export default function Shop({ query, saved, onToggleSaved }) {
   function update(key, value) {
     const next = { ...filters, [key]: value };
     if (next.sort === 'featured') next.sort = '';
-    window.history.replaceState(null, '', href('shop', next));
-    window.dispatchEvent(new HashChangeEvent('hashchange'));
+    navigate(href('shop', next), { replace: true });
   }
 
   function clear() {
-    window.history.replaceState(null, '', href('shop', filters.q ? { q: filters.q } : undefined));
-    window.dispatchEvent(new HashChangeEvent('hashchange'));
+    navigate(href('shop', filters.q ? { q: filters.q } : undefined), { replace: true });
   }
 
   const categoryName = categories.find((category) => category.id === filters.category)?.name;
@@ -28,12 +26,16 @@ export default function Shop({ query, saved, onToggleSaved }) {
   return (
     <div className="wrap">
       <header className="page-head">
-        <p className="eyebrow">THE BELTALY COLLECTION</p>
-        <h1>{filters.q ? <>Results for “{filters.q}”</> : categoryName ? t(categoryName) : 'A good fit starts here.'}</h1>
-        <p>Thoughtful details for every day, and the days that call for a little more.</p>
+        <nav className="breadcrumb" aria-label="Breadcrumb"><a href={href('')}>Home</a> › <span>{categoryName ? t(categoryName) : 'Belts'}</span></nav>
+        <h1>{filters.q ? <>Results for “{filters.q}”</> : categoryName ? t(categoryName) : 'All belts'}</h1>
+        <div className="chip-row">
+          <button className={!filters.category ? 'chip is-selected' : 'chip'} onClick={() => update('category', '')}>All</button>
+          {categories.map((category) => <button key={category.id} className={filters.category === category.id ? 'chip is-selected' : 'chip'} onClick={() => update('category', category.id)}>{t(category.name)}</button>)}
+        </div>
       </header>
-      <div className="shop-layout section section--flush">
+      <div className="shop-layout">
         <form className="filters" onSubmit={(event) => event.preventDefault()} aria-label="Filter belts">
+          <h2 className="filters-title">Filters</h2>
           <label>{t('Search Beltaly')}<input type="search" value={filters.q} onChange={(event) => update('q', event.target.value)} placeholder={t('Search by name, material, colour or occasion')} /></label>
           <label>{t('Category')}
             <select value={filters.category} onChange={(event) => update('category', event.target.value)}>

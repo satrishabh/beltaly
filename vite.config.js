@@ -1,9 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// base './' keeps asset and image paths relative, so the build also works under a subpath
-// (e.g. https://<user>.github.io/beltaly/). Routing uses #/ hashes, so no server rewrites are needed.
+// Served from the root of www.beltaly.in. Real paths (/shop/...) are prerendered by scripts/prerender.mjs,
+// so GitHub Pages serves each page with a 200 and its own title.
 export default defineConfig({
-  base: './',
+  base: '/',
   plugins: [react()],
 });

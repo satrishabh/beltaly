@@ -4,24 +4,19 @@ import { money, settings } from '../catalog.js';
 import { suggestedSize, whatsappUrl } from '../commerce.js';
 import { useT } from '../i18n.js';
 import { Link } from './shared.jsx';
+import pages from '../data/pages.json' with { type: 'json' };
 
-export const INFO_PAGES = {
-  'size-guide': 'Measure once. Wear it every day.',
-  about: 'Every detail has a story.',
-  contact: 'Good conversations start here.',
-  faq: 'A few things you might be wondering.',
-  shipping: 'From our hands to yours.',
-  privacy: 'Your information, thoughtfully handled.',
-  terms: 'The details that matter.',
-};
+// Page titles, headings and search descriptions live in src/data/pages.json (also read by scripts/prerender.mjs).
+export const INFO_PAGES = pages;
 
 const faqs = [
   ['How do I choose a size?', 'Start with your trouser waist plus 2 inches, or measure a belt from buckle pin to the most-used hole. See our size guide.'],
   ['Are the displayed prices tax inclusive?', 'Yes. INR prices include all applicable taxes. Shipping and optional COD fees are shown separately in the bag.'],
-  ['Is my order confirmed when I send it on WhatsApp?', 'No. The message is an order request. The store confirms stock, delivery, the final amount and acceptance.'],
-  ['Does this site verify UPI payments?', 'No. The store checks its own bank or payment dashboard before marking a payment received. A screenshot is not proof of payment.'],
+  ['Is Cash on Delivery available?', `Yes. Choose Cash on Delivery at checkout; a ${money(settings.codCharge)} COD charge applies. We confirm your order on WhatsApp before dispatch.`],
+  ['When is my order confirmed?', 'When we reply to your WhatsApp order message. We check stock and confirm the delivery details with you there.'],
+  ['What if the size is wrong?', 'Message us on WhatsApp with your order reference. Keep the belt unused in its box and we will help with an exchange.'],
   ['When are wallets coming?', 'Our wallet collection is coming soon. Follow Beltaly announcements or contact the store for updates.'],
-  ['Do I need an account?', 'No. Your bag and saved belts are kept in this browser. An account only keeps your order requests together on this device.'],
+  ['Do I need an account?', 'No. Your bag, wishlist and past orders are kept in this browser, so there is nothing to sign up for.'],
 ];
 
 function SizeCalculator() {
@@ -48,18 +43,37 @@ function SizeCalculator() {
   );
 }
 
+// Seller details from settings.business. Fields left empty are simply not shown.
+function StoreDetails() {
+  const business = settings.business ?? {};
+  const rows = [
+    ['Seller', business.legalName || 'Beltaly'],
+    ['Address', business.address],
+    ['GSTIN', settings.gstin],
+    ['Email', business.email],
+    ['WhatsApp', settings.whatsapp ? `+${settings.whatsapp.replace(/^91/, '91 ')}` : ''],
+    ['Grievance officer', business.grievanceOfficer],
+  ].filter(([, value]) => value);
+  return <table className="spec-table"><tbody>{rows.map(([label, value]) => <tr key={label}><th scope="row">{label}</th><td>{value}</td></tr>)}</tbody></table>;
+}
+
 export default function InfoPage({ page }) {
   const contactHref = settings.whatsapp ? whatsappUrl(settings.whatsapp) : null;
   return (
     <article className="wrap prose">
-      <p className="eyebrow">BELTALY / {page.replace('-', ' ').toUpperCase()}</p>
-      <h1>{INFO_PAGES[page]}</h1>
+      <nav className="breadcrumb" aria-label="Breadcrumb"><Link to="">Home</Link> › <span>{INFO_PAGES[page].title}</span></nav>
+      <h1>{INFO_PAGES[page].heading}</h1>
 
       {page === 'size-guide' && <>
         <p>The best guide is a belt you already love. Measure from the buckle pin to the hole you use most. That measurement is your belt size, not the total length of the strap.</p>
         <h2>A good starting point.</h2>
         <p>Choose a belt about 2 inches larger than your trouser waist. Fit varies by rise, clothing and personal preference, so use this as a guide and confirm the measurement.</p>
         <SizeCalculator />
+        <h2>Size chart.</h2>
+        <table className="spec-table size-table">
+          <thead><tr><th>Your trouser waist</th><th>Belt size to order</th><th>Belt size (cm)</th></tr></thead>
+          <tbody>{[28, 30, 32, 34, 36, 38, 40, 42, 44].map((belt) => <tr key={belt}><td>{belt - 2} in</td><td><b>{belt}</b></td><td>{Math.round(belt * 2.54)} cm</td></tr>)}</tbody>
+        </table>
         <h2>The three small steps.</h2>
         <ol><li>Wrap a measuring tape where your belt will sit, over your trousers.</li><li>Keep it comfortably snug, without pulling tight.</li><li>Add about 2 inches and choose the closest available size. If between sizes, size up.</li></ol>
         <p>For kids, measure an existing belt or the waist over clothing. Width is shown in millimetres; check your trouser loops before choosing.</p>
@@ -88,30 +102,30 @@ export default function InfoPage({ page }) {
       </>}
 
       {page === 'shipping' && <>
-        <p className="account-panel">Sample policy for owner review. Verified dispatch times, return windows and refund timelines must be published before accepting orders.</p>
-        <h2>Delivery areas & fees.</h2>
-        <p>{settings.deliverAllIndia ? 'We deliver across India, to any valid pincode.' : 'Delivery is currently limited to the pincodes in the delivery checker.'} Standard shipping is {money(settings.shippingFee)}, free on orders of {money(settings.freeShippingAbove)} or more. Cash on Delivery adds {money(settings.codCharge)} where available. These charges appear before you prepare an order request.</p>
-        <h2>Delivery estimates.</h2>
-        <p>The store confirms dispatch and delivery estimates on WhatsApp before accepting the request. There is no automated courier tracking yet.</p>
-        <h2>Returns & exchanges.</h2>
-        <p>Contact the store before sending an item back. Keep the order reference, packaging and photographs of any issue. Return eligibility and the refund process are confirmed with the store.</p>
+        <h2>Delivery.</h2>
+        <p>{settings.deliverAllIndia ? 'We deliver across India.' : 'We currently deliver to the pincodes accepted by the delivery checker.'} Delivery is {money(settings.shippingFee)} per order, and free on orders of {money(settings.freeShippingAbove)} or more. Cash on Delivery adds {money(settings.codCharge)}. All charges are shown in your bag before you send the order.</p>
+        <p>Once you send your order on WhatsApp, we confirm it and share the dispatch date there. If you have a question about delivery, message us with your BLT order reference.</p>
+        <h2>Size exchanges & returns.</h2>
+        <p>Wrong size, damaged in transit, or not what you expected? Message us on WhatsApp with your BLT order reference and a photo of the belt and its box. Please keep the belt unused and in its original packaging while we sort it out with you.{settings.returnDays ? ` Requests must be raised within ${settings.returnDays} days of delivery.` : ''}</p>
+        {contactHref && <a className="btn btn--whatsapp" href={contactHref} target="_blank" rel="noopener noreferrer">Message us on WhatsApp</a>}
       </>}
 
       {page === 'privacy' && <>
-        <p>This store keeps your bag, saved belts, order requests and language preference in your browser’s local storage. You can remove them through your browser’s site settings. No analytics or advertising trackers are included.</p>
-        <h2>Checkout information.</h2>
-        <p>Your name, phone and delivery address stay on the page while you prepare a request. Choosing WhatsApp puts them in a message that you decide whether to send. UPI links contain the amount, payee and order reference. Payment link providers handle their own payment pages.</p>
+        <p>We only collect what we need to deliver your order: your name, mobile number and delivery address. You choose to send these to us on WhatsApp when you place an order.</p>
+        <h2>What stays on your device.</h2>
+        <p>Your bag, wishlist, order history and language choice are saved in your own browser so they are still there next time. You can clear them at any time from your browser’s site settings. This site has no advertising or tracking cookies.</p>
         <h2>Third parties.</h2>
-        <p>The hosting provider processes normal web requests. WhatsApp, UPI apps and payment providers apply their own privacy policies.</p>
-        <p>The owner must add its legal identity, privacy contact and retention periods before launch.</p>
+        <p>WhatsApp, UPI apps and payment providers you choose to use apply their own privacy policies. We never ask for your UPI PIN, OTP or card details.</p>
+        <h2>Contact.</h2>
+        <p>For any privacy question, message us on WhatsApp{settings.business?.email ? <> or email <a href={`mailto:${settings.business.email}`}>{settings.business.email}</a></> : null}.</p>
       </>}
 
       {page === 'terms' && <>
-        <p>Prices on this site are in Indian rupees and include all taxes. Shipping and Cash on Delivery charges are shown before you send an order request.</p>
-        <h2>Order requests & payments.</h2>
-        <p>A BLT reference identifies a request; it is not an invoice, a stock reservation or acceptance of an order. The store accepts requests and verifies payments itself. Prices and stock may change before acceptance.</p>
+        <p>Prices on this site are in Indian rupees and include all taxes. Delivery and Cash on Delivery charges are shown before you send an order.</p>
+        <h2>Orders & payments.</h2>
+        <p>An order sent from this site, with its BLT reference, is confirmed when Beltaly replies on WhatsApp. Prices and stock can change until then. If we cannot fulfil an order, we will tell you, and refund any amount already paid.</p>
         <h2>Store information.</h2>
-        <p>The owner must publish its registered business name, address, contact details, GSTIN where applicable, final delivery and return policies, and a grievance contact before launch.</p>
+        <StoreDetails />
       </>}
     </article>
   );

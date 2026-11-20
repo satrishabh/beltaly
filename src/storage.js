@@ -7,10 +7,7 @@ export const STORAGE_KEYS = {
   cart: 'beltaly-cart-v2',
   saved: 'beltaly-saved-v2',
   orders: 'beltaly-orders-v2',
-  session: 'beltaly-session',
-  profile: 'beltaly-profile',
   language: 'beltaly-language',
-  businessRequest: 'beltaly-business-request',
 };
 
 function readJson(key, fallback) {
@@ -61,14 +58,6 @@ export function readOrders() {
     .map((order) => ({ ...order, total: Number(order.total) || 0, createdAt: order.createdAt || new Date().toISOString(), items: readLines(order.items) }))
     .slice(0, 50);
 }
-
-function readProfileShape(key) {
-  const stored = readJson(key, null);
-  return stored && typeof stored.email === 'string' && typeof stored.name === 'string' && stored.name.trim() ? stored : null;
-}
-
-export const readSession = () => readProfileShape(STORAGE_KEYS.session);
-export const readProfile = () => readProfileShape(STORAGE_KEYS.profile);
 
 export function readLanguage() {
   try {

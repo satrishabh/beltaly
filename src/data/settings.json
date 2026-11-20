@@ -8,6 +8,13 @@
   "upiVpa": "",
   "payeeName": "Beltaly",
   "gstin": "",
+  "business": {
+    "legalName": "",
+    "address": "",
+    "email": "",
+    "grievanceOfficer": ""
+  },
+  "returnDays": null,
   "shippingFee": 79,
   "freeShippingAbove": 1999,
   "codCharge": 49,

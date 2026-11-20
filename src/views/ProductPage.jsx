@@ -1,117 +1,158 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowUpRight, Heart, Plus, X, ZoomIn } from 'lucide-react';
+import { ArrowUpRight, Banknote, BadgeCheck, Gift, Heart, MapPin, MessageCircle, Ruler, ShoppingBag, X, Zap, ZoomIn } from 'lucide-react';
 import { discountPercent, getCategory, imageUrl, money, products, settings } from '../catalog.js';
 import { pincodeMessage, suggestedSize, whatsappUrl } from '../commerce.js';
 import { useT } from '../i18n.js';
-import { Link, ProductGrid } from './shared.jsx';
+import { Link, ProductGrid, Rating, href, navigate } from './shared.jsx';
 
 export default function ProductPage({ product, saved, onToggleSaved, onAddToCart }) {
   const t = useT();
   const [image, setImage] = useState(0);
-  const [size, setSize] = useState(product.sizes[Math.floor(product.sizes.length / 2) - 1] ?? product.sizes[0]);
+  const [size, setSize] = useState(null);
+  const [sizeError, setSizeError] = useState(false);
   const [pincode, setPincode] = useState('');
   const [pincodeResult, setPincodeResult] = useState('');
   const [waist, setWaist] = useState('');
   const zoom = useRef(null);
+  const sizeBlock = useRef(null);
   const isSaved = saved.includes(product.id);
   const off = discountPercent(product);
   const category = getCategory(product.category);
-  const related = products.filter((item) => item.id !== product.id && item.category === product.category).slice(0, 4);
+  const related = products.filter((item) => item.id !== product.id).slice(0, 4);
   const suggestion = suggestedSize(waist);
   const question = `Hi! I'd like to know more about ${product.name} (${product.id}).`;
+  const isCombo = /combo/i.test(product.name);
 
-  // Product structured data (INR offer) for search engines that render JavaScript.
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.textContent = JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'Product',
-      name: product.name,
-      description: product.description,
-      image: product.images.map((path) => new URL(imageUrl(path), window.location.href).href),
-      sku: product.id,
-      brand: { '@type': 'Brand', name: 'Beltaly' },
-      offers: { '@type': 'Offer', price: product.price, priceCurrency: 'INR', availability: `https://schema.org/${product.stock ? 'InStock' : 'OutOfStock'}`, url: window.location.href },
-    });
-    document.head.append(script);
-    document.title = `${product.name} | Beltaly`;
-    return () => script.remove();
-  }, [product]);
+  useEffect(() => { document.title = `${product.name} | Beltaly`; }, [product]);
+
+  // Shoppers must pick a size; the size block is highlighted if they try to buy without one.
+  function buy(goToBag) {
+    if (!size) {
+      setSizeError(true);
+      sizeBlock.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (onAddToCart(product.id, size, 1, !goToBag) && goToBag) navigate(href('cart'));
+  }
+
+  const specs = [
+    ['Material', product.material.replace(/^./, (c) => c.toUpperCase())],
+    ['Colour', product.colour],
+    ['Buckle', `${product.buckle.replace(/^./, (c) => c.toUpperCase())} buckle`],
+    ['In the box', isCombo ? '2 belts' : '1 belt'],
+    ['Sizes', `${product.sizes[0]}–${product.sizes.at(-1)} in (waist)`],
+    ['Category', category?.name ?? ''],
+    ['SKU', product.id],
+  ];
 
   return (
-    <div className="wrap section">
-      <div className="breadcrumb"><Link to="">Home</Link> / <Link to="shop">Shop</Link> / <Link to="shop" params={{ category: product.category }}>{t(category?.name ?? '')}</Link> / {product.name}</div>
+    <div className="wrap pdp-page">
+      <nav className="breadcrumb" aria-label="Breadcrumb"><Link to="">Home</Link> › <Link to="shop">Belts</Link> › <Link to="shop" params={{ category: product.category }}>{t(category?.name ?? '')}</Link> › <span>{product.name}</span></nav>
       <div className="detail">
-        <div>
-          <button className="zoom-button" onClick={() => zoom.current?.showModal()} aria-label="Zoom product image">
-            <img className="main-image" src={imageUrl(product.images[image])} alt={`${product.name} in ${product.colour}`} width="900" height="900" fetchpriority="high" />
-            <span className="zoom-hint"><ZoomIn size={16} /></span>
-          </button>
+        <div className="gallery">
           {product.images.length > 1 && (
             <div className="gallery-thumbs">
               {product.images.map((path, index) => (
-                <button key={path} className={index === image ? 'is-selected' : ''} aria-pressed={index === image} aria-label={`View ${index + 1}`} onClick={() => setImage(index)}>
+                <button key={path} className={index === image ? 'is-selected' : ''} aria-pressed={index === image} aria-label={`View image ${index + 1}`} onMouseEnter={() => setImage(index)} onClick={() => setImage(index)}>
                   <img src={imageUrl(path)} alt="" width="80" height="80" />
                 </button>
               ))}
             </div>
           )}
+          <div className="gallery-main">
+            <button className="zoom-button" onClick={() => zoom.current?.showModal()} aria-label="Zoom product image">
+              <img className="main-image" src={imageUrl(product.images[image])} alt={`${product.name} in ${product.colour}`} width="900" height="900" fetchpriority="high" />
+              <span className="zoom-hint"><ZoomIn size={16} /></span>
+            </button>
+            <button className={`save-toggle save-toggle--float ${isSaved ? 'is-saved' : ''}`} aria-pressed={isSaved} aria-label={isSaved ? 'Remove from wishlist' : 'Add to wishlist'} onClick={() => onToggleSaved(product.id)}><Heart size={18} fill={isSaved ? 'currentColor' : 'none'} /></button>
+            {product.images.length > 1 && <div className="gallery-dots" aria-hidden="true">{product.images.map((path, index) => <span key={path} className={index === image ? 'on' : ''} />)}</div>}
+          </div>
+          <div className="buy-buttons buy-buttons--desktop">
+            <button className="btn btn--cart" disabled={!product.stock} onClick={() => buy(false)}><ShoppingBag size={17} /> {t('add')}</button>
+            <button className="btn btn--buy" disabled={!product.stock} onClick={() => buy(true)}><Zap size={17} /> Buy now</button>
+          </div>
         </div>
 
-        <div>
-          <p className="eyebrow">{t(product.material)}{product.width ? ` / ${product.width} MM` : ''} / {t(product.buckle)} buckle</p>
-          <div className="title-row">
-            <h1>{product.name}</h1>
-            <button className={`save-toggle save-toggle--inline ${isSaved ? 'is-saved' : ''}`} aria-pressed={isSaved} aria-label={isSaved ? 'Remove from saved' : t('Save for later')} onClick={() => onToggleSaved(product.id)}><Heart size={18} fill={isSaved ? 'currentColor' : 'none'} /></button>
+        <div className="pdp-info">
+          <p className="pdp-brand">Beltaly</p>
+          <h1>{product.name}</h1>
+          <div className="pdp-rating-row">
+            <Rating value={product.rating} />
+            {product.amazon && <a className="link-muted" href={product.amazon} target="_blank" rel="noopener noreferrer">See reviews on Amazon.in</a>}
           </div>
-          <div className="detail-price">{money(product.price)} {off > 0 && <><del>{money(product.mrp)}</del> <span className="badge badge--static">{off}% {t('off').toUpperCase()}</span></>}</div>
-          <p className="hint">{t('tax')}{product.rating ? <> · <span className="rating">★ {product.rating.toFixed(1)}</span> on Amazon</> : null}</p>
-          <p>{product.description}</p>
-          <p className={product.stock ? 'stock' : 'error'}>{product.stock ? `● ${t('In stock')}` : t('Out of stock')}</p>
 
-          <form className="add-form" onSubmit={(event) => { event.preventDefault(); onAddToCart(product.id, size, 1); }}>
-            <label>{t('size')}
-              <select value={size} onChange={(event) => setSize(Number(event.target.value))}>
-                {product.sizes.map((value) => <option key={value} value={value}>{value} in / {Math.round(value * 2.54)} cm</option>)}
-              </select>
-            </label>
-            <label>{t('colour')}
-              <span className="colour-value">{t(product.colour)}</span>
-            </label>
-            <p className="hint"><Link className="text-link" to="size-guide">{t('Not sure? Find your belt size')} <ArrowUpRight size={13} /></Link></p>
-            <button className="btn mobile-add" type="submit" disabled={!product.stock}>{t('add')} <Plus size={16} /></button>
-          </form>
+          <div className="price-block">
+            {off > 0 && <span className="price-off">-{off}%</span>}
+            <span className="price-now">{money(product.price)}</span>
+            {off > 0 && <span className="price-mrp">M.R.P.: <del>{money(product.mrp)}</del></span>}
+            <p className="hint">{t('tax')}</p>
+          </div>
+
+          <div className="perks">
+            <span><Banknote size={20} />Cash on Delivery</span>
+            <span><BadgeCheck size={20} />Genuine leather</span>
+            <span><Gift size={20} />{isCombo ? 'Combo pack' : 'Gift box'}</span>
+            <span><MessageCircle size={20} />WhatsApp support</span>
+          </div>
+
+          <div ref={sizeBlock} className={`size-block ${sizeError ? 'has-error' : ''}`}>
+            <div className="size-head"><b>Select size <span className="hint">(waist, inches)</span></b><Link className="text-link" to="size-guide"><Ruler size={14} /> Size chart</Link></div>
+            <div className="size-chips" role="radiogroup" aria-label="Belt size">
+              {product.sizes.map((value) => (
+                <button key={value} role="radio" aria-checked={size === value} className={size === value ? 'is-selected' : ''} onClick={() => { setSize(value); setSizeError(false); }}>{value}</button>
+              ))}
+            </div>
+            {sizeError && <p className="error" role="alert">Please select a size.</p>}
+            {size && <p className="hint">Size {size} in fits a trouser waist of about {size - 2} in ({Math.round(size * 2.54)} cm belt).</p>}
+            <details className="size-help">
+              <summary>Not sure? Find your size</summary>
+              <label className="inline-label">Your trouser waist (inches) <input type="number" min="18" max="60" value={waist} onChange={(event) => setWaist(event.target.value)} /></label>
+              <p className="hint" role="status">{waist === '' ? 'Most people choose a belt 2 inches larger than their trouser waist.' : suggestion ? `Suggested size: ${suggestion.inches} in${product.sizes.includes(suggestion.inches) ? '' : ' (not available in this belt)'}.` : 'Enter a waist between 18 and 60 inches.'}</p>
+              {suggestion && product.sizes.includes(suggestion.inches) && suggestion.inches !== size && <button className="btn btn--small" onClick={() => { setSize(suggestion.inches); setSizeError(false); }}>Select {suggestion.inches} in</button>}
+            </details>
+          </div>
+
+          <p className={product.stock ? 'stock' : 'error'}>{product.stock ? (product.stock <= 5 ? `Only ${product.stock} left in stock` : t('In stock')) : t('Out of stock')}</p>
+
+          <div className="delivery-box">
+            <label htmlFor="pincode"><MapPin size={16} /> Delivery</label>
+            <form className="inline-form" onSubmit={(event) => { event.preventDefault(); setPincodeResult(pincodeMessage(pincode, settings)); }}>
+              <input id="pincode" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} value={pincode} onChange={(event) => setPincode(event.target.value.replace(/\D/g, ''))} placeholder="Enter 6-digit pincode" />
+              <button className="plain-button text-link" type="submit">{t('check')}</button>
+            </form>
+            <p className="hint" role="status">{pincodeResult || `Delivery ${money(settings.shippingFee)}, free above ${money(settings.freeShippingAbove)}. Cash on Delivery +${money(settings.codCharge)}.`}</p>
+          </div>
+
+          <section className="pdp-section">
+            <h2>About this item</h2>
+            <p>{product.description}</p>
+          </section>
+
+          <section className="pdp-section">
+            <h2>Product details</h2>
+            <table className="spec-table"><tbody>{specs.map(([label, value]) => <tr key={label}><th scope="row">{label}</th><td>{value}</td></tr>)}</tbody></table>
+          </section>
+
+          <details className="pdp-details"><summary>{t('Material & care')}</summary><p>{product.care}</p></details>
+          <details className="pdp-details"><summary>{t('Shipping & returns')}</summary><p>Delivery is {money(settings.shippingFee)}, free on orders of {money(settings.freeShippingAbove)} or more. Cash on Delivery adds {money(settings.codCharge)}. Wrong size or a problem with your belt? Message us on WhatsApp with your order reference. <Link className="text-link" to="shipping">Shipping & returns policy</Link></p></details>
 
           <div className="link-row">
-            <a className="text-link" href={settings.whatsapp ? whatsappUrl(settings.whatsapp, question) : '#/contact'} target={settings.whatsapp ? '_blank' : undefined} rel="noopener noreferrer">{t('Ask about this belt on WhatsApp')} <ArrowUpRight size={14} /></a>
-            {product.amazon && <a className="text-link" href={product.amazon} target="_blank" rel="noopener noreferrer">Also on Amazon <ArrowUpRight size={14} /></a>}
+            <a className="text-link" href={settings.whatsapp ? whatsappUrl(settings.whatsapp, question) : href('contact')} target={settings.whatsapp ? '_blank' : undefined} rel="noopener noreferrer"><MessageCircle size={15} /> {t('Ask about this belt on WhatsApp')}</a>
+            {product.amazon && <a className="text-link" href={product.amazon} target="_blank" rel="noopener noreferrer">Also on Amazon.in <ArrowUpRight size={14} /></a>}
           </div>
-
-          <div className="pincode-check">
-            <label htmlFor="pincode">{t('delivery')}</label>
-            <form className="inline-form" onSubmit={(event) => { event.preventDefault(); setPincodeResult(pincodeMessage(pincode, settings)); }}>
-              <input id="pincode" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} value={pincode} onChange={(event) => setPincode(event.target.value.replace(/\D/g, ''))} placeholder={t('6-digit pincode')} />
-              <button className="btn secondary" type="submit">{t('check')}</button>
-            </form>
-            <p className="hint" role="status">{pincodeResult}</p>
-          </div>
-
-          <details><summary>{t('Material & care')}</summary><p>{product.care}</p></details>
-          <details><summary>{t('Shipping & returns')}</summary><p>Shipping is {money(settings.shippingFee)}; free on orders of {money(settings.freeShippingAbove)} or more. Cash on Delivery adds {money(settings.codCharge)}. <Link className="text-link" to="shipping">Read the policy</Link>.</p></details>
-          <details>
-            <summary>{t('Quick size calculator')}</summary>
-            <label className="inline-label">{t('Waist (inches)')} <input type="number" min="18" max="60" value={waist} onChange={(event) => setWaist(event.target.value)} /></label>
-            <p className="hint" role="status">{waist === '' ? 'Usually choose a belt 2 inches larger than your waist; check available sizes.' : suggestion ? `Suggested belt: ${suggestion.inches} in / ${suggestion.cm} cm${product.sizes.includes(suggestion.inches) ? '' : ' (not available in this belt)'}.` : 'Enter a waist between 18 and 60 inches.'}</p>
-            {suggestion && product.sizes.includes(suggestion.inches) && suggestion.inches !== size && <button className="text-link plain-button" onClick={() => setSize(suggestion.inches)}>Select {suggestion.inches} in</button>}
-          </details>
         </div>
       </div>
 
-      {related.length > 0 && <section className="section"><h2>{t('A little more your style.')}</h2><ProductGrid items={related} saved={saved} onToggleSaved={onToggleSaved} /></section>}
+      {related.length > 0 && <section className="section"><h2 className="section-title">You may also like</h2><ProductGrid items={related} saved={saved} onToggleSaved={onToggleSaved} /></section>}
+
+      <div className="buy-bar">
+        <div className="buy-bar-price"><b>{money(product.price)}</b>{off > 0 && <small><del>{money(product.mrp)}</del> {off}% off</small>}</div>
+        <button className="btn btn--cart" disabled={!product.stock} onClick={() => buy(false)}>{t('add')}</button>
+        <button className="btn btn--buy" disabled={!product.stock} onClick={() => buy(true)}>Buy now</button>
+      </div>
 
       <dialog ref={zoom} className="zoom-dialog" onClick={(event) => event.target === zoom.current && zoom.current.close()}>
-        <form method="dialog"><button className="btn secondary" aria-label="Close zoom"><X size={16} /> {t('Close ×').replace(' ×', '')}</button></form>
+        <form method="dialog"><button className="icon-btn zoom-close" aria-label="Close zoom"><X size={20} /></button></form>
         <img src={imageUrl(product.images[image])} alt={`${product.name}, enlarged`} width="900" height="900" />
       </dialog>
     </div>

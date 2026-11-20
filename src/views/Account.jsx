@@ -1,145 +1,89 @@
 import { useState } from 'react';
-import { ArrowUpRight, BriefcaseBusiness, Check, Heart, Package, ShieldCheck } from 'lucide-react';
-import { requestPasswordReset, signIn, signUp, submitBusinessRequest } from '../api.js';
-import { getProduct, imageUrl, money } from '../catalog.js';
-import { PAYMENT_METHODS } from '../commerce.js';
+import { ArrowUpRight, Check, MessageCircle } from 'lucide-react';
+import { getProduct, imageUrl, money, settings } from '../catalog.js';
+import { PAYMENT_METHODS, whatsappUrl } from '../commerce.js';
 import { useT } from '../i18n.js';
 import { Link, ProductGrid, productHref } from './shared.jsx';
 
+// No sign-in: orders and the wishlist are kept in this browser. "account" is kept so old links still open.
 export const ACCOUNT_TITLES = {
-  account: 'Your Beltaly corner.',
-  orders: 'Your order requests.',
-  saved: 'Saved for another day.',
-  business: 'Belts for the whole team.',
+  account: 'My orders',
+  orders: 'My orders',
+  saved: 'Wishlist',
+  business: 'Bulk & corporate orders',
 };
 
-function AuthForm({ onAuthenticated }) {
-  const [mode, setMode] = useState('signin');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [pending, setPending] = useState(false);
-  const switchTo = (next) => { setMode(next); setMessage(''); };
-
-  async function submit(event) {
-    event.preventDefault();
-    if (pending) return;
-    setPending(true);
-    setMessage('');
-    try {
-      if (mode === 'reset') setMessage(await requestPasswordReset({ email }));
-      else if (mode === 'signup') onAuthenticated(await signUp({ name, email, password }));
-      else onAuthenticated(await signIn({ email, password }));
-      setPassword('');
-    } catch (error) {
-      setMessage(error?.message || 'Something went wrong. Please try again.');
-    } finally {
-      setPending(false);
-    }
-  }
-
-  return (
-    <div className="account-panel auth-panel">
-      <p className="eyebrow">BELTALY ACCOUNT</p>
-      <h2>{mode === 'signup' ? 'Create your account' : mode === 'reset' ? 'Reset your password' : 'Sign in'}</h2>
-      <p className="hint">No account is needed to order. Signing in keeps your order requests together on this device.</p>
-      <form className="stack-form" onSubmit={submit}>
-        {mode === 'signup' && <label>Your name<input autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} required /></label>}
-        <label>Email address<input type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} required /></label>
-        {mode !== 'reset' && <label>Password<input type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} value={password} onChange={(event) => setPassword(event.target.value)} minLength={8} required /></label>}
-        {message && <p className="hint" role="status">{message}</p>}
-        <button className="btn" type="submit" disabled={pending} aria-busy={pending}>{pending ? 'One moment…' : mode === 'signup' ? 'Create account' : mode === 'reset' ? 'Send reset link' : 'Sign in'} <ArrowUpRight size={15} /></button>
-      </form>
-      <div className="auth-switch">
-        {mode !== 'signup' && <button className="plain-button text-link" onClick={() => switchTo('signup')}>Create an account</button>}
-        {mode !== 'signin' && <button className="plain-button text-link" onClick={() => switchTo('signin')}>Back to sign in</button>}
-        {mode === 'signin' && <button className="plain-button text-link" onClick={() => switchTo('reset')}>Forgot password?</button>}
-      </div>
-      <p className="hint"><ShieldCheck size={14} /> Demo sign-in: matches an email saved in this browser and does not check passwords.</p>
-    </div>
-  );
-}
-
+// Bulk enquiries go straight to the store's WhatsApp with the details filled in.
 function BusinessForm() {
-  const [form, setForm] = useState({ businessName: '', email: '', phone: '', teamSize: '2–10' });
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState('');
-  const [done, setDone] = useState(false);
-  const field = (key) => ({ value: form[key], onChange: (event) => setForm({ ...form, [key]: event.target.value }) });
+  const [form, setForm] = useState({ businessName: '', name: '', phone: '', quantity: '25–50', note: '' });
+  const field = (key) => ({ value: form[key], onChange: (event) => setForm({ ...form, [key]: key === 'phone' ? event.target.value.replace(/\D/g, '') : event.target.value }) });
+  const message = [
+    'Hi Beltaly, I have a bulk / corporate enquiry.',
+    `Company: ${form.businessName.trim()}`,
+    `Name: ${form.name.trim()}`,
+    `Phone: ${form.phone}`,
+    `Quantity: ${form.quantity} belts`,
+    form.note.trim() && `Details: ${form.note.trim()}`,
+  ].filter(Boolean).join('\n');
 
-  async function submit(event) {
+  function submit(event) {
     event.preventDefault();
-    if (pending) return;
-    setPending(true);
-    setError('');
-    try {
-      await submitBusinessRequest({ ...form, businessName: form.businessName.trim(), email: form.email.trim().toLowerCase() });
-      setDone(true);
-    } catch (problem) {
-      setError(problem?.message || 'We couldn’t send that. Please try again.');
-    } finally {
-      setPending(false);
-    }
+    window.open(whatsappUrl(settings.whatsapp, message), '_blank', 'noopener');
   }
 
-  if (done) return <div className="account-panel"><Check size={22} /><h2>We’ll be in touch.</h2><p>We’ll follow up with {form.email} about {form.businessName}.</p><button className="btn secondary" onClick={() => setDone(false)}>Update your details</button></div>;
   return (
-    <div className="editorial business">
+    <div className="business">
       <div>
-        <p className="eyebrow">BELTALY FOR BUSINESS</p>
-        <p>Corporate gifting, wedding party sets and uniforms. Tell us about your team and we’ll share bulk pricing.</p>
-        <ul className="check-list"><li><Check size={15} /> Volume pricing</li><li><Check size={15} /> Gift-ready packaging</li><li><Check size={15} /> One contact for your order</li></ul>
+        <p>Corporate gifting, wedding party sets, uniforms and resellers. Tell us what you need and we’ll reply on WhatsApp with bulk pricing.</p>
+        <ul className="check-list"><li><Check size={15} /> Volume pricing</li><li><Check size={15} /> Gift-ready Beltaly boxes</li><li><Check size={15} /> One contact for your whole order</li></ul>
       </div>
-      <form className="account-panel stack-form" onSubmit={submit}>
-        <label>Business name<input required {...field('businessName')} /></label>
-        <label>Work email<input type="email" required {...field('email')} /></label>
-        <label>Mobile number<input type="tel" inputMode="numeric" pattern="[0-9]{10}" placeholder="10 digits" {...field('phone')} /></label>
-        <label>Team size<select {...field('teamSize')}><option>2–10</option><option>11–50</option><option>51–200</option><option>201+</option></select></label>
-        <p className="error" role="alert">{error}</p>
-        <button className="btn" type="submit" disabled={pending} aria-busy={pending}>{pending ? 'Sending…' : 'Request business pricing'} <ArrowUpRight size={15} /></button>
-        <small className="hint">This demo saves the request in this browser only.</small>
+      <form className="panel stack-form" onSubmit={submit}>
+        <label>Company or organisation<input required maxLength={120} autoComplete="organization" {...field('businessName')} /></label>
+        <label>Your name<input required maxLength={80} autoComplete="name" {...field('name')} /></label>
+        <label>Mobile number<input type="tel" inputMode="numeric" pattern="[0-9]{10}" maxLength={10} required placeholder="10 digits" autoComplete="tel-national" {...field('phone')} /></label>
+        <label>How many belts?<select {...field('quantity')}><option>10–25</option><option>25–50</option><option>50–200</option><option>200+</option></select></label>
+        <label>Anything else? <span className="hint">(optional)</span><textarea rows={3} maxLength={500} placeholder="Sizes, colours, delivery date, logo branding…" {...field('note')} /></label>
+        <button className="btn btn--whatsapp" type="submit"><MessageCircle size={17} /> Send enquiry on WhatsApp</button>
       </form>
     </div>
   );
 }
 
-export default function Account({ page, user, orders, saved, onToggleSaved, onAuthenticated, onLogout, onBuyAgain }) {
+export default function Account({ page, orders, saved, onToggleSaved, onBuyAgain }) {
   const t = useT();
   const savedProducts = saved.map(getProduct).filter(Boolean);
+  const view = page === 'account' ? 'orders' : page;
 
   return (
     <div className="wrap section">
-      <p className="eyebrow">BELTALY / {page.toUpperCase()}</p>
-      <h1 className="page-title">{page === 'account' && user ? `Hello, ${user.name.split(' ')[0]}.` : ACCOUNT_TITLES[page]}</h1>
-      <nav className="account-tabs" aria-label="Account">
-        {[['account', t('account')], ['orders', t('Orders')], ['saved', `${t('Saved')} (${saved.length})`], ['business', t('Business')]].map(([key, label]) => <Link key={key} to={key} aria-current={page === key ? 'page' : undefined}>{label}</Link>)}
+      <h1 className="page-title">{ACCOUNT_TITLES[view]}</h1>
+      <nav className="account-tabs" aria-label="Your Beltaly">
+        {[['orders', 'My orders'], ['saved', `Wishlist (${saved.length})`], ['business', 'Bulk orders']].map(([key, label]) => <Link key={key} to={key} aria-current={view === key ? 'page' : undefined}>{label}</Link>)}
       </nav>
 
-      {page === 'account' && (user
-        ? <div className="account-panel"><p className="eyebrow">SIGNED IN AS</p><h2>{user.name}</h2><p>{user.email}</p><div className="button-row"><Link className="btn" to="orders"><Package size={15} /> {t('Orders')}</Link><Link className="btn secondary" to="saved"><Heart size={15} /> {t('Saved')}</Link><Link className="btn secondary" to="business"><BriefcaseBusiness size={15} /> {t('Business')}</Link><button className="plain-button text-link" onClick={onLogout}>Sign out</button></div></div>
-        : <AuthForm onAuthenticated={onAuthenticated} />)}
-
-      {page === 'orders' && (orders.length === 0
-        ? <div className="empty"><p>No order requests yet. When you send one on WhatsApp, UPI or a payment link, it will be listed here with its BLT reference.</p><Link className="btn" to="shop">{t('collection')} <ArrowUpRight size={15} /></Link></div>
+      {view === 'orders' && (orders.length === 0
+        ? <div className="empty panel"><p>No orders yet. Orders you send from this phone or computer appear here with their BLT reference.</p><Link className="btn btn--buy" to="shop">{t('collection')}</Link></div>
         : <div className="order-list">
+          <p className="hint">Orders sent from this browser. For updates, message us on WhatsApp with the BLT reference.</p>
           {orders.map((order) => (
-            <article className="account-panel order-card" key={order.id}>
-              <div className="order-head"><div><p className="eyebrow">{order.id}</p><p className="hint">{new Date(order.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })} · {PAYMENT_METHODS[order.method] ?? 'Order'}</p></div><strong>{money(order.total)}</strong></div>
+            <article className="panel order-card" key={order.id}>
+              <div className="order-head"><div><b>{order.id}</b><p className="hint">{new Date(order.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })} · {PAYMENT_METHODS[order.method] ?? 'Order'}</p></div><strong>{money(order.total)}</strong></div>
               <div className="order-items">
-                {order.items.map((item) => { const product = getProduct(item.productId); return <a key={`${item.productId}-${item.size}`} href={productHref(product)}><img src={imageUrl(product.images[0])} alt="" width="56" height="56" /><span><b>{product.name}</b><small className="hint">{item.size} in × {item.quantity}</small></span></a>; })}
+                {order.items.map((item) => { const product = getProduct(item.productId); return <a key={`${item.productId}-${item.size}`} href={productHref(product)}><img src={imageUrl(product.images[0])} alt="" width="56" height="56" /><span><b>{product.name}</b><small className="hint">Size {item.size} in × {item.quantity}</small></span></a>; })}
               </div>
-              <p className="hint">{order.status}. The store confirms stock, payment and delivery on WhatsApp.</p>
-              <button className="btn secondary" onClick={() => onBuyAgain(order)}>Add these to bag again</button>
+              <div className="button-row">
+                <button className="btn secondary" onClick={() => onBuyAgain(order)}>Buy again</button>
+                {settings.whatsapp && <a className="text-link" href={whatsappUrl(settings.whatsapp, `Hi Beltaly, any update on my order ${order.id}?`)} target="_blank" rel="noopener noreferrer">Ask about this order <ArrowUpRight size={14} /></a>}
+              </div>
             </article>
           ))}
         </div>)}
 
-      {page === 'saved' && (savedProducts.length === 0
-        ? <div className="empty"><p>Tap the heart on any belt and it will be waiting here.</p><Link className="btn" to="shop">{t('collection')} <ArrowUpRight size={15} /></Link></div>
+      {view === 'saved' && (savedProducts.length === 0
+        ? <div className="empty panel"><p>Tap the heart on any belt to save it here.</p><Link className="btn btn--buy" to="shop">{t('collection')}</Link></div>
         : <ProductGrid items={savedProducts} saved={saved} onToggleSaved={onToggleSaved} className="shop-products" />)}
 
-      {page === 'business' && <BusinessForm />}
+      {view === 'business' && <BusinessForm />}
     </div>
   );
 }

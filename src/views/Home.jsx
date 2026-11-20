@@ -1,107 +1,93 @@
-import { ArrowUpRight, Banknote, RotateCcw, Smartphone } from 'lucide-react';
-import { banners, categories, collections, getProduct, imageUrl, products } from '../catalog.js';
+import { ArrowRight, Banknote, BadgeCheck, Gift, MessageCircle, Ruler, Truck } from 'lucide-react';
+import { banners, categories, collections, discountPercent, getProduct, imageUrl, money, products, settings } from '../catalog.js';
 import { useT } from '../i18n.js';
-import { Link, ProductGrid, href } from './shared.jsx';
+import { Link, ProductGrid, href, productHref } from './shared.jsx';
 
-const categoryMarks = ['▱', '≈', '✳', '⇄', '⌁', '⊞'];
-const stories = [
-  ['The everyday upgrade', 'A considered finish for office mornings, coffee runs, and everything in between.', '01 / WORKDAY'],
-  ['A gift with character', 'Something useful. Something personal. Something they will reach for again.', '02 / GIFTING'],
-  ['One less thing to think about', 'A good fit brings the whole outfit together. Simple as that.', '03 / EVERYDAY'],
-];
+const lowestPrice = Math.min(...products.map((product) => product.price));
+const bestOff = Math.max(...products.map(discountPercent));
 
 export default function Home({ saved, onToggleSaved }) {
   const t = useT();
   const bestsellers = collections.find((collection) => collection.id === 'bestsellers');
   const featured = bestsellers?.productIds.length ? bestsellers.productIds.map(getProduct) : products.slice(0, 4);
+  const hero = products.find((product) => product.badge === 'BESTSELLER') ?? products[0];
+  const combo = products.find((product) => product.category === 'gifts');
 
   return (
-    <div className="wrap">
-      <section className="hero">
-        <div className="hero-copy">
-          <p className="eyebrow">{t('heroEyebrow')}</p>
-          <h1>{t('heroTitle')}<br /><em>{t('heroEmphasis')}</em></h1>
-          <p>{t('heroBody')}</p>
-          <div className="button-row">
-            <Link className="btn" to="shop">{t('collection')} <ArrowUpRight size={16} /></Link>
-            <Link className="text-link" to="about">{t('story')}</Link>
+    <div className="home">
+      <section className="hero-banner">
+        <div className="wrap hero-inner">
+          <div className="hero-copy">
+            <p className="hero-kicker">Genuine leather belts</p>
+            <h1>{t('heroTitle')} <em>{t('heroEmphasis')}</em></h1>
+            <p>Plate buckle belts and combo packs in sizes 28 to 44. Starting at <b>{money(lowestPrice)}</b>{bestOff > 0 ? <>, up to <b>{bestOff}% off</b> M.R.P.</> : null}</p>
+            <div className="button-row">
+              <Link className="btn btn--buy" to="shop">Shop all belts <ArrowRight size={16} /></Link>
+              <a className="btn btn--ghost" href={productHref(hero)}>View the bestseller</a>
+            </div>
           </div>
-          <div className="tiny-note">CONSIDERED DETAILS. &nbsp; HONEST CHARACTER. &nbsp; EVERYDAY EASE.</div>
-        </div>
-        <div className="hero-art hero-art--logo">
-          <div className="logo-stage">
-            <picture>
-              <source srcSet={imageUrl('/brand/logo-3d.webp')} type="image/webp" />
-              <img className="logo-3d" src={imageUrl('/brand/logo-3d.png')} alt="Beltaly — Genuine Leather" width="900" height="582" fetchpriority="high" />
-            </picture>
-          </div>
-          <div className="circle-seal">Genuine<br />leather.<br />✳</div>
-          <div className="art-caption"><span>THE BELTALY MARK</span><span>MADE FOR INDIA</span></div>
+          <a className="hero-product" href={productHref(hero)} aria-label={hero.name}>
+            <img src={imageUrl(hero.images[0])} alt={hero.name} width="900" height="900" fetchpriority="high" />
+            <span className="hero-tag"><small>Bestseller</small><b>{money(hero.price)}</b></span>
+          </a>
         </div>
       </section>
 
-      <div className="trust">
-        <span><Banknote size={15} /> {t('trustCod')}</span>
-        <span><RotateCcw size={15} /> {t('trustReturns')}</span>
-        <span><Smartphone size={15} /> {t('trustSecure')}</span>
-      </div>
-
-      <section className="section">
-        <div className="section-head"><div><p className="eyebrow">{t('categoryEyebrow')}</p><h2>{t('categories')}</h2></div></div>
-        <div className="category-grid">
-          {categories.map((category, index) => (
-            <a className="category" key={category.id} href={href('shop', { category: category.id })}>
-              <span aria-hidden="true">{categoryMarks[index % categoryMarks.length]}</span>
-              <b>{t(category.name)} <ArrowUpRight size={15} className="category-arrow" /></b>
-            </a>
-          ))}
+      <div className="wrap">
+        <div className="trust">
+          <span><Banknote size={22} /><b>Cash on Delivery</b><small>Pay when it arrives</small></span>
+          <span><Truck size={22} /><b>Pan-India delivery</b><small>Free above {money(settings.freeShippingAbove)}</small></span>
+          <span><BadgeCheck size={22} /><b>Genuine leather</b><small>Metal buckles</small></span>
+          <span><MessageCircle size={22} /><b>WhatsApp support</b><small>Talk to a real person</small></span>
         </div>
-      </section>
 
-      <section className="section section--tight">
-        <div className="section-head">
-          <div><p className="eyebrow">{t('favouritesEyebrow')}</p><h2>{t('favourites')}</h2></div>
-          <Link className="text-link" to="shop">{t('viewAll')} <ArrowUpRight size={14} /></Link>
-        </div>
-        <ProductGrid items={featured} saved={saved} onToggleSaved={onToggleSaved} className="home-products" />
-      </section>
-
-      {banners.map((banner) => (
-        <section className="strip" key={banner.id}>
-          <div><p className="eyebrow">{banner.eyebrow}</p><h2>{banner.title}</h2><p>{banner.description}</p></div>
-          <div>
-            <div className="strip-mark" aria-hidden="true">✳ ─── ✳</div>
-            <a className="btn" href={`#${banner.href.replace(/\/\?/, '?').replace(/\/$/, '')}`}>Discover the edit <ArrowUpRight size={16} /></a>
+        <section className="section">
+          <h2 className="section-title">Shop by category</h2>
+          <div className="category-grid">
+            {categories.map((category) => {
+              const sample = products.find((product) => product.category === category.id);
+              return (
+                <a className="category" key={category.id} href={href('shop', { category: category.id })}>
+                  <span className="category-img"><img src={imageUrl(sample.images[0])} alt="" width="300" height="300" loading="lazy" /></span>
+                  <b>{t(category.name)}</b>
+                  <small>{category.description}</small>
+                </a>
+              );
+            })}
           </div>
         </section>
-      ))}
 
-      <section className="section editorial">
-        <div className="editorial-art editorial-art--photo"><img src={imageUrl('/products/plate-buckle-tan.webp')} alt="Tan Beltaly leather belt with a plate buckle on its gift box" width="900" height="900" loading="lazy" /></div>
-        <div>
-          <p className="eyebrow">A LITTLE GUIDE TO A GREAT FIT</p>
-          <h2>{t('sizeTitle')}</h2>
-          <p>{t('sizeBody')}</p>
-          <Link className="text-link" to="size-guide">{t('sizeCta')} <ArrowUpRight size={14} /></Link>
-          <div className="steps" aria-hidden="true">{Array.from({ length: 5 }, (_, i) => <span className="hole" key={i} />)}</div>
-        </div>
-      </section>
+        <section className="section section--tight">
+          <div className="section-head">
+            <h2 className="section-title">{t('favourites')}</h2>
+            <Link className="text-link" to="shop">{t('viewAll')} <ArrowRight size={14} /></Link>
+          </div>
+          <ProductGrid items={featured} saved={saved} onToggleSaved={onToggleSaved} className="home-products" />
+        </section>
 
-      <section className="section section--flush">
-        <p className="eyebrow">THE FEELING WE’RE MAKING ROOM FOR</p>
-        <h2>Made to fit your life.</h2>
-        <p className="hint">Illustrative customer stories. Real reviews will appear after launch.</p>
-        <div className="quotes">
-          {stories.map(([title, quote, note]) => <div className="quote" key={title}><small>{title}</small><blockquote>“{quote}”</blockquote><small>{note}</small></div>)}
-        </div>
-      </section>
+        {combo && banners.map((banner) => (
+          <section className="offer-strip" key={banner.id}>
+            <div>
+              <p className="offer-kicker">{banner.eyebrow}</p>
+              <h2>{banner.title}</h2>
+              <p>{banner.description}</p>
+              <p className="offer-price"><b>{money(combo.price)}</b> <del>{money(combo.mrp)}</del> <span>{discountPercent(combo)}% off</span></p>
+              <a className="btn btn--buy" href={productHref(combo)}>Shop the combo <ArrowRight size={16} /></a>
+            </div>
+            <img src={imageUrl(combo.images[combo.images.length - 1])} alt={combo.name} width="600" height="600" loading="lazy" />
+          </section>
+        ))}
 
-      <section className="section next-chapter">
-        <p className="eyebrow">THE NEXT CHAPTER</p>
-        <h2>Belts today.<br /><em>Wallets on the horizon.</em></h2>
-        <p>Beltaly is a belt and leather goods company. Our upcoming wallet collection will bring the same considered details to what you carry every day.</p>
-        <span className="badge badge--static">{t('Wallets · coming soon').toUpperCase()}</span>
-      </section>
+        <section className="section why">
+          <h2 className="section-title">Why Beltaly</h2>
+          <div className="why-grid">
+            <div><BadgeCheck size={26} /><h3>Genuine leather</h3><p>Real leather straps with brushed metal buckles, made for daily wear.</p></div>
+            <div><Ruler size={26} /><h3>Sizes 28 to 44</h3><p>Nine waist sizes, and a <Link className="text-link" to="size-guide">simple size guide</Link> so you get it right the first time.</p></div>
+            <div><Gift size={26} /><h3>Ready to gift</h3><p>Belts arrive in the Beltaly box. The combo pack is an easy present.</p></div>
+            <div><Banknote size={26} /><h3>Order your way</h3><p>Cash on Delivery or order on WhatsApp. Also sold on <a className="text-link" href={settings.amazonStore} target="_blank" rel="noopener noreferrer">Amazon.in</a>.</p></div>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

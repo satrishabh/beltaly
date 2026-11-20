@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowUpRight, Minus, Plus, ShieldCheck } from 'lucide-react';
+import { ArrowUpRight, Minus, Plus, ShieldCheck, ShoppingBag } from 'lucide-react';
 import { prepareOrder } from '../api.js';
-import { getProduct, imageUrl, money, products, settings } from '../catalog.js';
+import { discountPercent, getProduct, imageUrl, money, products, settings } from '../catalog.js';
 import { PAYMENT_METHODS, orderSummary, paymentLinkFor, totals, upiUrl, whatsappUrl } from '../commerce.js';
 import { useT } from '../i18n.js';
 import { Link, productHref } from './shared.jsx';
@@ -19,6 +19,8 @@ export default function Checkout({ cartItems, onUpdateQuantity, onRemove, onOrde
   const [qr, setQr] = useState('');
   const result = useRef(null);
   const sum = totals(cartItems, products, settings, method);
+  const itemCount = cartItems.reduce((count, item) => count + item.quantity, 0);
+  const mrpTotal = cartItems.reduce((total, item) => total + (getProduct(item.productId)?.mrp || 0) * item.quantity, 0);
 
   useEffect(() => {
     if (!order) return;
@@ -52,29 +54,31 @@ export default function Checkout({ cartItems, onUpdateQuantity, onRemove, onOrde
 
   const summary = order ? orderSummary(order, products, money) : '';
   const whatsapp = (paid = false) => whatsappUrl(settings.whatsapp, summary + (paid ? '\nI have paid. Please verify receipt and confirm this order.' : ''));
-  const sendLink = (label, url, primary = true) => <a className={`btn ${primary ? '' : 'secondary'}`} href={url} target="_blank" rel="noopener noreferrer" onClick={() => onOrderSent(order)}>{label} <ArrowUpRight size={15} /></a>;
+  const sendLink = (label, url, primary = true) => <a className={`btn ${primary ? 'btn--buy' : 'secondary'}`} href={url} target="_blank" rel="noopener noreferrer" onClick={() => onOrderSent(order)}>{label} <ArrowUpRight size={15} /></a>;
 
   return (
     <div className="wrap section">
-      <p className="eyebrow">A FEW GOOD CHOICES</p>
-      <h1 className="page-title">{t('Your bag.')}</h1>
+      <h1 className="page-title">{order ? 'Send your order' : `Bag (${itemCount} ${itemCount === 1 ? 'item' : 'items'})`}</h1>
       <div className="cart-layout">
         <div aria-live="polite">
-          {cartItems.length === 0 && !order && <div className="empty"><p>{t('empty')}</p><Link className="btn" to="shop">{t('collection')} <ArrowUpRight size={15} /></Link></div>}
+          {cartItems.length === 0 && !order && <div className="empty panel"><ShoppingBag size={34} /><p>{t('empty')}</p><Link className="btn" to="shop">{t('collection')} <ArrowUpRight size={15} /></Link></div>}
           {cartItems.map((item) => {
             const product = getProduct(item.productId);
             return (
-              <div className="cart-row" key={`${item.productId}-${item.size}`}>
-                <a href={productHref(product)}><img src={imageUrl(product.images[0])} alt={product.name} width="85" height="85" /></a>
+              <div className="cart-row panel" key={`${item.productId}-${item.size}`}>
+                <a href={productHref(product)}><img src={imageUrl(product.images[0])} alt={product.name} width="96" height="96" /></a>
                 <div>
                   <h3><a href={productHref(product)}>{product.name}</a></h3>
-                  <p className="hint">{t(product.colour)} / {item.size} in · {money(product.price)}</p>
-                  <button className="plain hint" onClick={() => onRemove(item)} aria-label={`Remove ${product.name}`}>{t('Remove')}</button>
-                </div>
-                <div className="qty">
-                  <button aria-label={`One less ${product.name}`} onClick={() => onUpdateQuantity(item, -1)}><Minus size={13} /></button>
-                  <span aria-label="Quantity">{item.quantity}</span>
-                  <button aria-label={`One more ${product.name}`} disabled={item.quantity >= Math.min(99, product.stock)} onClick={() => onUpdateQuantity(item, 1)}><Plus size={13} /></button>
+                  <p className="hint">Size {item.size} in · {product.colour}</p>
+                  <p className="line-price"><b>{money(product.price * item.quantity)}</b>{discountPercent(product) > 0 && <><del>{money(product.mrp * item.quantity)}</del><span className="off">{discountPercent(product)}% off</span></>}</p>
+                  <div className="line-actions">
+                    <div className="qty">
+                      <button aria-label={`One less ${product.name}`} onClick={() => onUpdateQuantity(item, -1)}><Minus size={13} /></button>
+                      <span aria-label="Quantity">{item.quantity}</span>
+                      <button aria-label={`One more ${product.name}`} disabled={item.quantity >= Math.min(99, product.stock)} onClick={() => onUpdateQuantity(item, 1)}><Plus size={13} /></button>
+                    </div>
+                    <button className="plain-button link-muted" onClick={() => onRemove(item)} aria-label={`Remove ${product.name}`}>{t('Remove')}</button>
+                  </div>
                 </div>
               </div>
             );
@@ -82,19 +86,24 @@ export default function Checkout({ cartItems, onUpdateQuantity, onRemove, onOrde
         </div>
 
         <div>
+          {cartItems.length > 0 && <>
           <div className="summary-box">
-            <h3>{t('The details')}</h3>
-            <div className="total-row"><span>{t('Subtotal')}</span><span>{money(sum.subtotal)}</span></div>
-            <div className="total-row"><span>{t('Shipping')}</span><span>{sum.subtotal && !sum.shipping ? t('Free shipping unlocked.') : money(sum.shipping)}</span></div>
+            <h3>Price details</h3>
+            <div className="total-row"><span>Price ({itemCount} {itemCount === 1 ? 'item' : 'items'})</span><span>{money(mrpTotal)}</span></div>
+            {mrpTotal > sum.subtotal && <div className="total-row"><span>Discount</span><span className="good">−{money(mrpTotal - sum.subtotal)}</span></div>}
+            <div className="total-row"><span>Delivery</span><span>{sum.subtotal && !sum.shipping ? <span className="good">FREE</span> : money(sum.shipping)}</span></div>
             {method === 'cod' && <div className="total-row"><span>{t('COD charge')}</span><span>{money(sum.cod)}</span></div>}
             <hr />
-            <div className="total-row"><b>{t('Total')}</b><b>{money(sum.total)}</b></div>
-            <p className="hint">{t('tax')}. {sum.subtotal > 0 && sum.shipping > 0 ? `Add ${money(settings.freeShippingAbove - sum.subtotal)} more for free shipping.` : ''}</p>
+            <div className="total-row total-row--grand"><b>{t('Total')}</b><b>{money(sum.total)}</b></div>
+            {mrpTotal > sum.subtotal && sum.subtotal > 0 && <p className="savings">You will save {money(mrpTotal - sum.subtotal)} on this order</p>}
+            <p className="hint">{t('tax')}.{sum.subtotal > 0 && sum.shipping > 0 ? ` Add ${money(settings.freeShippingAbove - sum.subtotal)} more for free delivery.` : ''}</p>
           </div>
+          <p className="secure-note"><ShieldCheck size={16} /> No online payment is taken on this site. You pay on delivery or after the store confirms on WhatsApp.</p>
+          </>}
 
           {cartItems.length > 0 && (
-            <form className="checkout" onSubmit={submit}>
-              <h3>{t('checkout')}</h3>
+            <form className="checkout panel" onSubmit={submit}>
+              <h3>Delivery address</h3>
               {!storeReady && <p className="account-panel hint">Ordering opens once the store adds its WhatsApp number in <code>src/data/settings.json</code>. You can still try the form.</p>}
               <div className="form-grid">
                 <label>{t('Name')}<input autoComplete="name" required maxLength={100} {...field('name')} /></label>
@@ -106,16 +115,16 @@ export default function Checkout({ cartItems, onUpdateQuantity, onRemove, onOrde
                 <legend>{t('How would you like to order?')}</legend>
                 {enabledMethods.map((key) => <label key={key}><input type="radio" name="method" value={key} checked={method === key} onChange={() => { setMethod(key); setOrder(null); }} /> {t(PAYMENT_METHODS[key])}</label>)}
               </fieldset>
-              <p className="hint">This prepares an order request. The store confirms stock, payment and delivery with you. Your address stays on this page until you choose to send it.</p>
-              <button className="btn" type="submit" disabled={pending} aria-busy={pending}>{pending ? t('Preparing…') : <>{t('Prepare order')} <ArrowUpRight size={15} /></>}</button>
+              <p className="hint">Next, you send the order to us on WhatsApp. We confirm stock and delivery there. Your details are not sent anywhere until you do.</p>
+              <button className="btn btn--buy btn--block" type="submit" disabled={pending} aria-busy={pending}>{pending ? t('Preparing…') : <>Continue <ArrowUpRight size={15} /></>}</button>
               <p className="error" role="alert">{error}</p>
             </form>
           )}
 
           {order && (
             <div className="order-result" ref={result} role="status">
-              <h3>{t('Order request')} {order.id}</h3>
-              <p className="hint"><ShieldCheck size={14} /> This is a request, not a confirmed order. The store must verify stock and any payment.</p>
+              <h3>Last step: send order {order.id}</h3>
+              <p className="hint"><ShieldCheck size={14} /> Tap the button to send this order to Beltaly on WhatsApp. Your order is confirmed when we reply.</p>
               <p className="order-summary">{summary}</p>
               <div className="button-row">
                 {order.method === 'upi' && <>
