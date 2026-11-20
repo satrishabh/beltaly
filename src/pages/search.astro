@@ -1,5 +1,0 @@
----
-import Layout from '../layouts/Layout.astro';import ProductCard from '../components/ProductCard.astro';import {getStore} from '../data/providers';
-const {products,settings}=await getStore();
----
-<Layout title="Find your belt" noindex><div class="wrap section"><p class="eyebrow">LET’S FIND YOUR KIND OF DETAIL</p><h1 style="font-size:3.7rem">Looking for something?</h1><label for="search-input">Search by name, material, colour or occasion</label><input class="search-box" id="search-input" type="search" placeholder="Try tan, wedding, canvas…" autocomplete="off"/><p id="search-status" role="status">{products.length} belts to discover</p><div class="products" id="search-results">{products.map(p=><ProductCard product={p} cloud={settings.cloudinaryCloud}/>)}</div></div></Layout>
