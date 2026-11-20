@@ -58,6 +58,8 @@ for (const category of json('data/categories.json')) [category.name, category.de
 for (const banner of json('data/banners.json')) [banner.eyebrow, banner.title, banner.description].forEach(add);
 for (const page of Object.values(json('data/pages.json'))) [page.title, page.heading].forEach(add);
 add(json('data/settings.json').announcement);
+add(json('data/settings.json').tagline);
+for (const look of json('data/lookbook.json').items ?? []) add(look.caption);
 
 const list = [...keys].filter((key) => !/^(en|hi|q|link|qrcode|locationchange|category)$/.test(key)).sort((a, b) => a.localeCompare(b));
 const placeholders = (text) => [...String(text).matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join(',');

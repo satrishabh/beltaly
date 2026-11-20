@@ -58,8 +58,9 @@ export function ProductCard({ product, saved, onToggleSaved }) {
   return (
     <article className="product-card">
       <a href={productHref(product)} className="product-link">
-        <div className="product-image">
+        <div className={`product-image studio ${product.images.length > 1 ? 'has-alt' : ''}`}>
           <img src={imageUrl(product.images[0])} alt={t(product.name)} width="600" height="600" loading="lazy" />
+          {product.images.length > 1 && <img className="alt-image" src={imageUrl(product.images[1])} alt="" width="600" height="600" loading="lazy" aria-hidden="true" />}
           {(product.badge || !product.stock) && <span className="badge">{!product.stock ? t('Out of stock') : t(product.badge)}</span>}
         </div>
         <div className="product-body">

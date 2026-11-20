@@ -130,6 +130,22 @@ function App() {
     return () => window.removeEventListener('storage', onStorage);
   }, []);
 
+  // Sections marked data-reveal fade up as they scroll into view (skipped for reduced motion).
+  useEffect(() => {
+    const root = document.documentElement;
+    const items = [...document.querySelectorAll('[data-reveal]:not(.is-visible)')];
+    if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      items.forEach((item) => item.classList.add('is-visible'));
+      return undefined;
+    }
+    root.classList.add('reveal-ready');
+    const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
+      if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); }
+    }), { rootMargin: '0px 0px -6% 0px', threshold: 0.08 });
+    items.forEach((item) => observer.observe(item));
+    return () => observer.disconnect();
+  }, [route, dict]);
+
   // Hide broken remote images instead of showing a broken-image icon.
   useEffect(() => {
     const onError = (event) => event.target instanceof HTMLImageElement && event.target.classList.add('img-failed');
@@ -281,7 +297,7 @@ function App() {
         </div>
       </nav>
 
-      <main id="main" tabIndex={-1}>{screen}</main>
+      <main id="main" tabIndex={-1} key={route.parts.join('/')} className="page-enter">{screen}</main>
 
       <section className="help-band">
         <div className="wrap help-band-inner">

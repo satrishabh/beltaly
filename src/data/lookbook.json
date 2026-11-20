@@ -1,0 +1,5 @@
+{
+  "_how_to": "Put photos in public/lookbook/ (JPG/WebP, about 1600px wide). Add one entry per photo below. 'heroImage' replaces the photo in the home page arch; each item appears in the Lookbook section. 'product' (optional) links the photo to a product id like BLT-101.",
+  "heroImage": "",
+  "items": []
+}
