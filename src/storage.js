@@ -10,6 +10,7 @@ export const STORAGE_KEYS = {
   language: 'beltaly-language',
   viewed: 'beltaly-viewed',
   customer: 'beltaly-customer',
+  theme: 'beltaly-theme',
 };
 
 function readJson(key, fallback) {
@@ -61,11 +62,12 @@ export function readOrders() {
     .slice(0, 50);
 }
 
+// The saved language code, or null on a first visit (the app then detects one from the browser).
 export function readLanguage() {
   try {
-    return window.localStorage.getItem(STORAGE_KEYS.language) === 'hi' ? 'hi' : 'en';
+    return window.localStorage.getItem(STORAGE_KEYS.language);
   } catch {
-    return 'en';
+    return null;
   }
 }
 
@@ -85,4 +87,14 @@ export function readCustomer() {
   if (!stored || typeof stored !== 'object') return null;
   const text = (value, max) => (typeof value === 'string' ? value.slice(0, max) : '');
   return { name: text(stored.name, 100), phone: text(stored.phone, 10).replace(/\D/g, ''), address: text(stored.address, 600), pincode: text(stored.pincode, 6).replace(/\D/g, '') };
+}
+
+// 'light' (default), 'dark' or 'system'. index.html applies it before the first paint to avoid a flash.
+export function readTheme() {
+  try {
+    const stored = window.localStorage.getItem(STORAGE_KEYS.theme);
+    return ['light', 'dark', 'system'].includes(stored) ? stored : 'light';
+  } catch {
+    return 'light';
+  }
 }

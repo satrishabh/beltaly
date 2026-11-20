@@ -1,4 +1,4 @@
-import { Heart, Star, Truck } from 'lucide-react';
+import { ArrowUpRight, Heart, Star, Truck } from 'lucide-react';
 import { discountPercent, imageUrl, money, settings, swatchColours } from '../catalog.js';
 import { useT } from '../i18n.js';
 
@@ -33,9 +33,23 @@ export function Link({ to, params, children, ...props }) {
   return <a href={href(to, params)} {...props}>{children}</a>;
 }
 
+// "Also available on Amazon · Flipkart · Meesho" — from settings.marketplaces (https links only).
+export const marketplaces = (settings.marketplaces ?? []).filter((item) => item?.name && /^https:\/\//.test(item.url ?? ''));
+export function Marketplaces({ className = '' }) {
+  const t = useT();
+  if (!marketplaces.length) return null;
+  return (
+    <div className={`marketplaces ${className}`}>
+      <span>{t('Also available on')}</span>
+      {marketplaces.map((item) => <a key={item.name} href={item.url} target="_blank" rel="noopener noreferrer">{item.name} <ArrowUpRight size={12} /></a>)}
+    </div>
+  );
+}
+
 export function Rating({ value, label = true }) {
+  const t = useT();
   if (!value) return null;
-  return <span className="rating-chip" title="Rating on Amazon.in">{value.toFixed(1)} <Star size={11} fill="currentColor" />{label && <small>Amazon</small>}</span>;
+  return <span className="rating-chip" title={t('Rating on Amazon.in')}>{value.toFixed(1)} <Star size={11} fill="currentColor" />{label && <small>Amazon</small>}</span>;
 }
 
 export function ProductCard({ product, saved, onToggleSaved }) {
@@ -45,19 +59,19 @@ export function ProductCard({ product, saved, onToggleSaved }) {
     <article className="product-card">
       <a href={productHref(product)} className="product-link">
         <div className="product-image">
-          <img src={imageUrl(product.images[0])} alt={`${product.name}, ${product.colour} ${product.material} belt`} width="600" height="600" loading="lazy" />
-          {(product.badge || !product.stock) && <span className="badge">{!product.stock ? t('Out of stock') : product.badge}</span>}
+          <img src={imageUrl(product.images[0])} alt={t(product.name)} width="600" height="600" loading="lazy" />
+          {(product.badge || !product.stock) && <span className="badge">{!product.stock ? t('Out of stock') : t(product.badge)}</span>}
         </div>
         <div className="product-body">
-          <h3>{product.name}</h3>
-          <p className="product-meta">{t(product.material)} · {t(product.buckle)} buckle <span className="swatch" style={{ background: swatchColours[product.colour] || '#8B5A2B' }} /></p>
+          <h3>{t(product.name)}</h3>
+          <p className="product-meta">{t(product.material.replace(/^./, (c) => c.toUpperCase()))} · {t(`${product.buckle.replace(/^./, (c) => c.toUpperCase())} buckle`)} <span className="swatch" style={{ background: swatchColours[product.colour] || '#8B5A2B' }} /></p>
           <Rating value={product.rating} label={false} />
-          <div className="price"><b>{money(product.price)}</b>{off > 0 && <><del>{money(product.mrp)}</del><span className="off">{off}% {t('off')}</span></>}</div>
-          <p className="product-ship"><Truck size={13} /> {product.price >= settings.freeShippingAbove ? 'Free delivery' : 'Cash on Delivery available'}</p>
+          <div className="price"><b>{money(product.price)}</b>{off > 0 && <><del>{money(product.mrp)}</del><span className="off">{t('{percent}% off', { percent: off })}</span></>}</div>
+          <p className="product-ship"><Truck size={13} /> {t(product.price >= settings.freeShippingAbove ? 'Free delivery' : 'Cash on Delivery available')}</p>
         </div>
       </a>
       {onToggleSaved && (
-        <button className={`save-toggle ${saved ? 'is-saved' : ''}`} aria-pressed={saved} aria-label={`${saved ? 'Remove' : 'Save'} ${product.name}`} onClick={() => onToggleSaved(product.id)}>
+        <button className={`save-toggle ${saved ? 'is-saved' : ''}`} aria-pressed={saved} aria-label={t(saved ? 'Remove from wishlist' : 'Add to wishlist')} onClick={() => onToggleSaved(product.id)}>
           <Heart size={16} fill={saved ? 'currentColor' : 'none'} />
         </button>
       )}

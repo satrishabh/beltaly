@@ -1,54 +1,70 @@
-// English / Hindi strings. Codex's dictionaries are reused as-is from src/data:
-//   en.json + hi.json  → short keys ("heroTitle")
-//   ui.json            → English phrase → { en, hi }
-// `extra` below holds strings added for the React screens. To add a language (Tamil, Bengali,
-// Marathi…), add its column to each source and to LANGUAGES.
-import { createContext, useContext } from 'react';
-import en from './data/en.json' with { type: 'json' };
-import hi from './data/hi.json' with { type: 'json' };
-import ui from './data/ui.json' with { type: 'json' };
+// Translations. Keys are the English text itself, so English needs no file and a missing translation
+// falls back to English instead of showing a blank. Values may contain {placeholders}.
+// Each language lives in src/locales/<code>.json and is downloaded only when a shopper picks it.
+// To add a language: add it to LANGUAGES, create src/locales/<code>.json (run `npm run i18n:keys` for the list).
+import { createContext, createElement, Fragment, useContext } from 'react';
 
-export const LANGUAGES = ['en', 'hi'];
+export const LANGUAGES = [
+  { code: 'en', name: 'English', native: 'English' },
+  { code: 'hi', name: 'Hindi', native: 'हिन्दी', font: 'Noto Sans Devanagari' },
+  { code: 'bn', name: 'Bengali', native: 'বাংলা', font: 'Noto Sans Bengali' },
+  { code: 'mr', name: 'Marathi', native: 'मराठी', font: 'Noto Sans Devanagari' },
+  { code: 'te', name: 'Telugu', native: 'తెలుగు', font: 'Noto Sans Telugu' },
+  { code: 'ta', name: 'Tamil', native: 'தமிழ்', font: 'Noto Sans Tamil' },
+  { code: 'gu', name: 'Gujarati', native: 'ગુજરાતી', font: 'Noto Sans Gujarati' },
+  { code: 'kn', name: 'Kannada', native: 'ಕನ್ನಡ', font: 'Noto Sans Kannada' },
+  { code: 'ml', name: 'Malayalam', native: 'മലയാളം', font: 'Noto Sans Malayalam' },
+  { code: 'pa', name: 'Punjabi', native: 'ਪੰਜਾਬੀ', font: 'Noto Sans Gurmukhi' },
+  { code: 'ur', name: 'Urdu', native: 'اردو', font: 'Noto Nastaliq Urdu', dir: 'rtl' },
+  { code: 'ks', name: 'Kashmiri', native: 'کٲشُر', font: 'Noto Naskh Arabic', dir: 'rtl' },
+];
 
-const extra = {
-  'Saved': { en: 'Saved', hi: 'सेव किए गए' },
-  'Orders': { en: 'Orders', hi: 'ऑर्डर' },
-  'Business': { en: 'Business', hi: 'बिज़नेस' },
-  'Sign in': { en: 'Sign in', hi: 'साइन इन' },
-  'Bag': { en: 'Bag', hi: 'बैग' },
-  'Search Beltaly': { en: 'Search Beltaly', hi: 'Beltaly में खोजें' },
-  'Looking for something?': { en: 'Looking for something?', hi: 'कुछ ढूँढ रहे हैं?' },
-  'No matches yet. Try another word.': { en: 'No matches yet. Try another word.', hi: 'अभी कुछ नहीं मिला। दूसरा शब्द आज़माएँ।' },
-  'belts found': { en: 'belts found', hi: 'बेल्ट मिलीं' },
-  'Ask about this belt on WhatsApp': { en: 'Ask about this belt on WhatsApp', hi: 'इस बेल्ट के बारे में WhatsApp पर पूछें' },
-  'Not sure? Find your belt size': { en: 'Not sure? Find your belt size', hi: 'पक्का नहीं? अपना बेल्ट साइज़ जानें' },
-  'Out of stock': { en: 'Out of stock', hi: 'स्टॉक में नहीं' },
-  'In stock': { en: 'In stock', hi: 'स्टॉक में है' },
-  'off': { en: 'off', hi: 'छूट' },
-  'A little more your style.': { en: 'A little more your style.', hi: 'आपके अंदाज़ की कुछ और।' },
-  'Save for later': { en: 'Save for later', hi: 'बाद के लिए सेव करें' },
-  'Saved for later': { en: 'Saved for later', hi: 'बाद के लिए सेव' },
-  'Continue to checkout': { en: 'Continue to checkout', hi: 'चेकआउट पर जाएँ' },
-  'Keep looking': { en: 'Keep looking', hi: 'और देखें' },
-  'Free shipping unlocked.': { en: 'Free shipping unlocked.', hi: 'मुफ़्त शिपिंग मिल गई।' },
-  'Prepare order': { en: 'Prepare order', hi: 'ऑर्डर तैयार करें' },
-  'Preparing…': { en: 'Preparing…', hi: 'तैयार हो रहा है…' },
-  'Order request': { en: 'Order request', hi: 'ऑर्डर अनुरोध' },
-  'Back to the shop': { en: 'Back to the shop', hi: 'दुकान पर वापस' },
-  'Wallets · coming soon': { en: 'Wallets · coming soon', hi: 'वॉलेट · जल्द आ रहे हैं' },
-  'Let’s talk': { en: 'Let’s talk', hi: 'बात करें' },
-};
+export const directionOf = (code) => LANGUAGES.find((language) => language.code === code)?.dir ?? 'ltr';
 
-const tables = { en: { ...Object.fromEntries(Object.entries(ui).map(([k, v]) => [k, v.en])), ...Object.fromEntries(Object.entries(extra).map(([k, v]) => [k, v.en])), ...en } };
-tables.hi = { ...Object.fromEntries(Object.entries(ui).map(([k, v]) => [k, v.hi])), ...Object.fromEntries(Object.entries(extra).map(([k, v]) => [k, v.hi])), ...hi };
+export const isLanguage = (code) => LANGUAGES.some((language) => language.code === code);
 
-// Falls back to English, then to the key itself, so a missing translation never shows a blank.
-export function translate(language, key) {
-  return tables[language]?.[key] ?? tables.en[key] ?? key;
+// First visit: use the browser's language if we support it (e.g. a phone set to Tamil), otherwise English.
+export function detectLanguage() {
+  for (const tag of navigator.languages ?? [navigator.language]) {
+    const code = String(tag).slice(0, 2).toLowerCase();
+    if (isLanguage(code)) return code;
+  }
+  return 'en';
 }
 
-export const LanguageContext = createContext('en');
+// Vite turns this into one lazily loaded chunk per language at build time.
+const loaders = import.meta.glob(['./locales/*.json', '!./locales/_keys.json'], { import: 'default' });
+export async function loadDictionary(code) {
+  const load = loaders[`./locales/${code}.json`];
+  return load ? load() : {};
+}
+
+// Adds the Google Noto font for the language's script, once.
+export function loadFont(code) {
+  const font = LANGUAGES.find((language) => language.code === code)?.font;
+  const id = `font-${font?.replace(/\s+/g, '-')}`;
+  if (!font || document.getElementById(id)) return;
+  document.head.append(Object.assign(document.createElement('link'), {
+    id, rel: 'stylesheet', href: `https://fonts.googleapis.com/css2?family=${font.replace(/\s+/g, '+')}:wght@400;500;600;700&display=swap`,
+  }));
+}
+
+export function format(dict, key, vars) {
+  const text = (dict && dict[key]) || key;
+  return vars ? text.replace(/\{(\w+)\}/g, (match, name) => (vars[name] ?? match)) : text;
+}
+
+export const LanguageContext = createContext({ code: 'en', dict: {} });
+
+// t('Add to bag'), t('Only {count} left', { count: 3 }), t.rich('Starting at {price}', { price }) → values in <b>.
 export function useT() {
-  const language = useContext(LanguageContext);
-  return (key) => translate(language, key);
+  const { dict } = useContext(LanguageContext);
+  const t = (key, vars) => format(dict, key, vars);
+  t.rich = (key, vars) => {
+    const text = (dict && dict[key]) || key;
+    return text.split(/\{(\w+)\}/g).map((part, index) => (index % 2 ? createElement('b', { key: index, dir: 'auto' }, vars[part] ?? part) : createElement(Fragment, { key: index }, part)));
+  };
+  return t;
 }
+
+export const useLanguage = () => useContext(LanguageContext).code;

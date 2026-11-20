@@ -2,6 +2,20 @@
   "name": "beltaly",
   "logo": "/brand/logo-3d.png",
   "amazonStore": "https://www.amazon.in/s?rh=n%3A1571271031%2Cp_4%3ABELTALY",
+  "marketplaces": [
+    {
+      "name": "Amazon",
+      "url": "https://www.amazon.in/s?rh=n%3A1571271031%2Cp_4%3ABELTALY"
+    },
+    {
+      "name": "Flipkart",
+      "url": "https://www.flipkart.com/search?q=beltaly"
+    },
+    {
+      "name": "Meesho",
+      "url": "https://www.meesho.com/search?q=beltaly"
+    }
+  ],
   "tagline": "Good things come full circle.",
   "announcement": "A better fit for every day. Free shipping on orders above ₹1,999.",
   "whatsapp": "919310264372",

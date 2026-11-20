@@ -11,7 +11,8 @@ export default function Shop({ query, saved, onToggleSaved }) {
   const t = useT();
   const filters = Object.fromEntries(FILTER_KEYS.map((key) => [key, query.get(key) || '']));
   const sort = sorters[filters.sort] ? filters.sort : 'featured';
-  const results = products.filter((product) => matchesFilters(product, filters) && matchesSearch(product, filters.q)).sort(sorters[sort]);
+  const local = (text) => t(text).toLowerCase().includes(filters.q.trim().toLowerCase());
+  const results = products.filter((product) => matchesFilters(product, filters) && (matchesSearch(product, filters.q) || local(product.name) || local(product.colour))).sort(sorters[sort]);
   const active = FILTER_KEYS.filter((key) => key !== 'sort' && key !== 'category' && filters[key]);
 
   function update(key, value) {
@@ -22,32 +23,35 @@ export default function Shop({ query, saved, onToggleSaved }) {
 
   const clear = () => navigate(href('shop', filters.category ? { category: filters.category } : undefined), { replace: true });
   const categoryName = categories.find((category) => category.id === filters.category)?.name;
-  const label = (key) => (key === 'q' ? `“${filters.q}”` : key === 'max' ? `Under ₹${filters.max}` : t(filters[key]));
+  // Filter values are raw data ("plate", "Black"); show them with the same wording as product pages.
+  const cap = (text) => String(text).replace(/^./, (c) => c.toUpperCase());
+  const valueLabel = (name, value) => t(name === 'buckle' ? `${cap(value)} buckle` : cap(value));
+  const label = (key) => (key === 'q' ? `“${filters.q}”` : key === 'max' ? t('Under ₹{amount}', { amount: filters.max }) : valueLabel(key, filters[key]));
 
   return (
     <div className="wrap shop-page">
       <header className="page-head">
-        <nav className="breadcrumb" aria-label="Breadcrumb"><a href={href('')}>Home</a> › <span>{categoryName ? t(categoryName) : 'Belts'}</span></nav>
-        <h1>{filters.q ? <>Results for “{filters.q}”</> : categoryName ? t(categoryName) : 'All belts'}</h1>
+        <nav className="breadcrumb" aria-label={t('Breadcrumb')}><a href={href('')}>{t('Home')}</a> › <span>{categoryName ? t(categoryName) : t('Belts')}</span></nav>
+        <h1>{filters.q ? t('Results for “{query}”', { query: filters.q }) : categoryName ? t(categoryName) : t('All belts')}</h1>
         <div className="chip-row">
-          <button className={!filters.category ? 'chip is-selected' : 'chip'} onClick={() => update('category', '')}>All</button>
+          <button className={!filters.category ? 'chip is-selected' : 'chip'} onClick={() => update('category', '')}>{t('All')}</button>
           {categories.map((category) => <button key={category.id} className={filters.category === category.id ? 'chip is-selected' : 'chip'} onClick={() => update('category', category.id)}>{t(category.name)}</button>)}
         </div>
       </header>
 
-      <form className="toolbar" onSubmit={(event) => event.preventDefault()} aria-label="Filter and sort belts">
+      <form className="toolbar" onSubmit={(event) => event.preventDefault()} aria-label={t('Filter and sort belts')}>
         {filterFields.map((field) => (
           <label key={field.name}><span>{t(field.label)}</span>
             <select value={filters[field.name]} onChange={(event) => update(field.name, event.target.value)}>
               <option value="">{t('All')}</option>
-              {field.values.map((value) => <option key={value} value={value}>{t(value)}</option>)}
+              {field.values.map((value) => <option key={value} value={value}>{valueLabel(field.name, value)}</option>)}
             </select>
           </label>
         ))}
-        <label><span>Price</span>
+        <label><span>{t('Price')}</span>
           <select value={filters.max} onChange={(event) => update('max', event.target.value)}>
             <option value="">{t('Any price')}</option>
-            {PRICE_STEPS.map((step) => <option key={step} value={step}>Under ₹{step}</option>)}
+            {PRICE_STEPS.map((step) => <option key={step} value={step}>{t('Under ₹{amount}', { amount: step })}</option>)}
           </select>
         </label>
         <label className="toolbar-sort"><span>{t('Sort')}</span>
@@ -61,8 +65,8 @@ export default function Shop({ query, saved, onToggleSaved }) {
       </form>
 
       <div className="listing-top">
-        <span role="status">{results.length} {results.length === 1 ? 'belt' : 'belts'}</span>
-        {active.map((key) => <button key={key} className="chip chip--small" onClick={() => update(key, '')} aria-label={`Remove filter ${label(key)}`}>{label(key)} <X size={13} /></button>)}
+        <span role="status">{t(results.length === 1 ? '{count} belt' : '{count} belts', { count: results.length })}</span>
+        {active.map((key) => <button key={key} className="chip chip--small" onClick={() => update(key, '')} aria-label={`${t('Remove')}: ${label(key)}`}>{label(key)} <X size={13} /></button>)}
         {active.length > 1 && <button className="plain-button link-muted" onClick={clear}>{t('Clear filters')}</button>}
       </div>
 

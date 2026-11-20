@@ -49,6 +49,7 @@ const organization = {
   name: 'Beltaly',
   url: SITE,
   logo: `${SITE}/brand/logo-3d.png`,
+  sameAs: (settings.marketplaces ?? []).map((item) => item.url).filter((url) => /^https:\/\//.test(url ?? '')),
   ...(settings.whatsapp ? { contactPoint: { '@type': 'ContactPoint', telephone: `+${settings.whatsapp}`, contactType: 'customer service', areaServed: 'IN' } } : {}),
 };
 
