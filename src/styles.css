@@ -1070,3 +1070,129 @@ html:not([lang="en"]) .lux-sign { font-style: normal; }
 .static-page { padding-block: 32px 48px; }
 .static-page img { max-width: 360px; border-radius: var(--radius-lg); background: var(--studio); }
 .static-page ul { padding-left: 18px; }
+
+/* ======================================================================
+   MAISON LAYER — quieter, more editorial luxury.
+   Espresso announcement, hairline header, metallic gold, restrained price
+   and rating colours (no marketplace greens/reds), calmer product cards.
+   ====================================================================== */
+:root {
+  --gold-metal: linear-gradient(135deg, #e6c879 0%, #c9a14a 42%, #a97d2c 100%);
+  --hair: rgb(201 161 74 / .28);
+  --off: #8a6213;
+}
+:root[data-theme="dark"] { --off: #d9b866; }
+
+/* Announcement: espresso with small tracked gold type */
+.announcement { background: #0a0806; color: #d9bd7a; border-bottom: 1px solid var(--hair); font-size: 11.5px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; padding-block: 9px; }
+html:not([lang="en"]) .announcement { letter-spacing: .02em; text-transform: none; font-size: 13px; }
+
+/* Header: hairline search, roomier logo */
+.topbar { background: #0d0a07; box-shadow: none; }
+.header { min-height: 76px; }
+.logo-mark { width: 44px; }
+.header-search { height: 42px; background: transparent; border: 1px solid rgb(243 236 225 / .2); border-radius: 999px; transition: border-color .2s, background .2s; }
+.header-search:focus-within { border-color: var(--gold); background: rgb(255 255 255 / .03); }
+.header-search input, :root[data-theme="dark"] .header-search input { padding: 0 20px; background: transparent; color: #f3ece1; border-radius: 999px; }
+.header-search input::placeholder { color: #9d917e; }
+.header-search > button { width: 46px; background: transparent; color: var(--gold); border-radius: 0 999px 999px 0; }
+.header-search > button:hover { color: #f3ece1; }
+.lang-select { border-color: rgb(243 236 225 / .2); border-radius: 999px; padding-inline: 12px; }
+.head-link { color: #e9e2d2; }
+.head-link:hover { color: var(--gold); }
+
+/* Category bar: centred, animated gold underline */
+.catbar { background: #0d0a07; border-top: 1px solid rgb(243 236 225 / .07); border-bottom: 1px solid var(--hair); }
+@media (min-width: 1001px) { .catbar-inner { justify-content: center; gap: 10px; } }
+.catbar a { position: relative; border-bottom: 0; padding-block: 12px; color: #cfc5b3; transition: color .2s; }
+.catbar a::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 6px; height: 1px; background: var(--gold); transform: scaleX(0); transition: transform .35s var(--ease); }
+.catbar a:hover, .catbar a[aria-current="page"] { color: var(--gold); }
+.catbar a:hover::after, .catbar a[aria-current="page"]::after { transform: scaleX(1); }
+
+/* Metallic gold buttons with a soft sheen on hover */
+.btn--gold, .btn--cart, .hero-copy .btn--buy, .offer-strip .btn--buy, .buy-buttons .btn--buy, .buy-bar .btn--buy, .drawer .btn--buy {
+  position: relative; overflow: hidden; background: var(--gold-metal); border-color: #b88d3a; color: #17110a;
+}
+.btn--gold::after, .buy-buttons .btn--buy::after, .buy-bar .btn--buy::after {
+  content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / .35) 50%, transparent 70%); transform: translateX(-120%); transition: transform .8s var(--ease); pointer-events: none;
+}
+.btn--gold:hover::after, .buy-buttons .btn--buy:hover::after, .buy-bar .btn--buy:hover::after { transform: translateX(120%); }
+.btn--gold:hover, .buy-buttons .btn--buy:hover, .buy-bar .btn--buy:hover { filter: none; background: var(--gold-metal); }
+.btn { transition: filter .2s, transform .2s, background .2s, color .2s, border-color .2s; }
+.buy-buttons .btn--buy, .buy-bar .btn--buy { box-shadow: 0 10px 24px -10px rgb(169 125 44 / .7); }
+.buy-buttons .btn--cart, .buy-bar .btn--cart { background: var(--espresso); border-color: var(--espresso); color: #f3ece1; }
+.buy-buttons .btn--cart:hover, .buy-bar .btn--cart:hover { background: #2a2017; filter: none; }
+
+/* Prices, discounts and ratings: quiet and on-brand */
+.off, .price-off, .offer-price span, .buy-bar-price small { color: var(--off) !important; font-weight: 600; letter-spacing: .02em; }
+.lux-gift .offer-price span { color: var(--off) !important; }
+.price-off { font-size: 18px; vertical-align: 6px; padding: 3px 8px; border: 1px solid var(--hair); border-radius: 2px; }
+.price b, .price-now, .line-price b { font-family: var(--sans); font-weight: 700; letter-spacing: -.01em; }
+.rating-chip, :root[data-theme="dark"] .rating-chip { padding: 0; background: none; color: var(--gold-text); font-weight: 700; }
+:root[data-theme="dark"] .rating-chip { color: var(--gold); }
+.rating-chip small { color: var(--ink-subtle); font-weight: 500; }
+.lux-hero-price em { color: var(--gold) !important; }
+
+/* Product cards: image-led, minimal text */
+.home-products, .lux .products { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px; }
+.product-card .product-meta .swatch { display: none; }
+.product-card .rating-chip, .product-card .product-ship { display: none; }
+.product-card h3 { font-family: var(--display); font-size: 1.3rem; font-weight: 600; line-height: 1.15; }
+.product-meta { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+html:not([lang="en"]) .product-meta { letter-spacing: 0; text-transform: none; font-size: 12px; }
+.product-image { box-shadow: inset 0 0 0 1px rgb(201 161 74 / .14); }
+.product-card:hover .product-image { box-shadow: inset 0 0 0 1px rgb(201 161 74 / .45); }
+.badge { background: rgb(13 10 7 / .88); color: #e3c47d; border: 1px solid var(--hair); }
+.product-card .save-toggle { box-shadow: 0 2px 8px rgb(0 0 0 / .08); }
+
+/* Marketplace links: hairline, smaller */
+.marketplaces a { padding: 4px 12px; border-color: var(--line); background: transparent; font-weight: 600; font-size: 13px; }
+.marketplaces--dark a { border-color: rgb(243 236 225 / .18); color: #e9e2d2; }
+
+/* Size promise: the button arrow is a normal icon, not the large line drawing */
+.lux-fit .btn svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; }
+.lux-fit { background: var(--surface); border-color: var(--hair); }
+
+/* Section rhythm */
+.lux .section { padding-block: 56px; }
+.lux .section--tight { padding-block: 36px 64px; }
+.lux-head { margin-bottom: 34px; }
+
+/* WhatsApp: brand green only on hover; espresso and gold at rest */
+.whatsapp { background: #0d0a07; color: var(--gold); border: 1px solid var(--hair); box-shadow: 0 12px 30px -8px rgb(0 0 0 / .45); transition: background .2s, color .2s, transform .2s; }
+.whatsapp:hover { background: var(--whatsapp); color: #fff; transform: translateY(-2px); }
+.help-band { background: var(--espresso); border-top: 1px solid var(--hair); }
+.help-band h2 { color: #f7f1e6; }
+.help-band p { color: #b9ad99; }
+.help-band .btn--whatsapp { background: transparent; border-color: var(--gold); color: var(--gold); }
+.help-band .btn--whatsapp:hover { background: var(--gold-metal); color: #17110a; filter: none; }
+
+/* Footer */
+.site-footer { background: #0a0806; }
+.footer-logo img { width: 190px; }
+.footer h3 { font-size: 11px; letter-spacing: .2em; }
+.footer-bottom { border-top-color: var(--hair) !important; color: #8f8370; }
+
+/* Bag drawer and checkout pick up the gold, not green */
+.free-ship-bar span { background: var(--gold-metal) !important; }
+.savings { color: var(--off) !important; }
+
+/* Selected size chip: espresso with gold, thin gold ring */
+.size-chips button.is-selected { background: var(--espresso); color: #e3c47d; border-color: var(--espresso); box-shadow: 0 0 0 1px var(--gold) inset; }
+
+@media (max-width: 700px) {
+  .header { min-height: 58px; }
+  .logo-mark { width: 34px; }
+  .mobile-search { border-radius: 999px; background: rgb(255 255 255 / .06); border: 1px solid rgb(243 236 225 / .18); color: #9d917e; }
+  .mobile-search input, :root[data-theme="dark"] .mobile-search input { color: #f3ece1; }
+  .mobile-search input::placeholder { color: #9d917e; }
+  .announcement { font-size: 10.5px; letter-spacing: .1em; }
+  .home-products, .lux .products { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .product-card h3 { font-size: 1.1rem; }
+  .lux .section { padding-block: 36px; }
+  .help-band .btn { width: 100%; }
+}
+
+/* Small finishing touches */
+.pdp-brand { font-size: 11px; letter-spacing: .24em; text-transform: uppercase; }
+@media (max-width: 700px) { .product-card .product-meta { display: none; } }
