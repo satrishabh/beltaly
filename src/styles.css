@@ -795,3 +795,6 @@ html:not([lang="en"]) .menu-section h3 { text-transform: none; letter-spacing: 0
   .marketplaces > span { flex-basis: 100%; }
   .marketplaces--home { justify-content: flex-start; }
 }
+.footer a.footer-mail { display: inline-flex; align-items: center; gap: 6px; color: var(--gold); word-break: break-all; }
+.contact-mail { margin-top: 16px; }
+.menu-list a span { overflow-wrap: anywhere; }

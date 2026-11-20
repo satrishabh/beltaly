@@ -94,6 +94,7 @@ export default function InfoPage({ page }) {
         {contactHref
           ? <a className="btn" href={contactHref} target="_blank" rel="noopener noreferrer">{t('Start a WhatsApp conversation')} <ArrowUpRight size={15} /></a>
           : <div className="account-panel"><h3>{t('We’re getting ready.')}</h3><p>{t('The store’s WhatsApp number has not been added yet. Ordering opens once setup is complete.')}</p></div>}
+        {settings.business?.email && <p className="contact-mail">{t('Email')}: <a href={`mailto:${settings.business.email}`}>{settings.business.email}</a></p>}
         <h2>{t('Before you message.')}</h2>
         <p>{t('For product questions, include the product name and preferred size. For existing orders, include your BLT reference. Never share a UPI PIN, OTP or card details.')}</p>
       </>}

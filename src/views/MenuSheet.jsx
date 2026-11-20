@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, ChevronRight, CircleHelp, Globe, Heart, Laptop, MessageCircle, Moon, Package, Ruler, ScrollText, Shield, Sun, Truck, UserRound, X } from 'lucide-react';
+import { BriefcaseBusiness, ChevronRight, CircleHelp, Globe, Heart, Laptop, Mail, MessageCircle, Moon, Package, Ruler, ScrollText, Shield, Sun, Truck, UserRound, X } from 'lucide-react';
 import { settings } from '../catalog.js';
 import { whatsappUrl } from '../commerce.js';
 import { LANGUAGES, useT } from '../i18n.js';
@@ -55,6 +55,7 @@ export default function MenuSheet({ onClose, orderCount, savedCount, language, o
           <h3>{t('Help & information')}</h3>
           <nav className="menu-list">
             {settings.whatsapp && <a href={whatsappUrl(settings.whatsapp)} target="_blank" rel="noopener noreferrer"><MessageCircle size={19} /><span>{t('Chat on WhatsApp')}</span><ChevronRight size={16} /></a>}
+            {settings.business?.email && <a href={`mailto:${settings.business.email}`}><Mail size={19} /><span>{settings.business.email}</span><ChevronRight size={16} /></a>}
             <Link to="size-guide"><Ruler size={19} /><span>{t('Size guide')}</span><ChevronRight size={16} /></Link>
             <Link to="shipping"><Truck size={19} /><span>{t('Shipping & returns')}</span><ChevronRight size={16} /></Link>
             <Link to="faq"><CircleHelp size={19} /><span>{t('FAQs')}</span><ChevronRight size={16} /></Link>

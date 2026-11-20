@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ArrowUpRight, Check, ChevronDown, Globe, Heart, Home as HomeIcon, LayoutGrid, Menu, MessageCircle, Minus, Package, Plus, ShoppingBag, Truck, X } from 'lucide-react';
+import { ArrowUpRight, Check, ChevronDown, Globe, Heart, Home as HomeIcon, LayoutGrid, Mail, Menu, MessageCircle, Minus, Package, Plus, ShoppingBag, Truck, X } from 'lucide-react';
 import ErrorBoundary from './ErrorBoundary.jsx';
 import { categories, discountPercent, getProduct, imageUrl, money, products, settings } from './catalog.js';
 import { totals, validateItems, whatsappUrl } from './commerce.js';
@@ -296,7 +296,7 @@ function App() {
             <Marketplaces className="marketplaces--dark" />
           </div>
           <div><h3>{t('Explore')}</h3><Link to="shop">{t('All belts')}</Link>{categories.map((category) => <Link key={category.id} to="shop" params={{ category: category.id }}>{t(category.name)}</Link>)}<Link to="size-guide">{t('Size guide')}</Link><Link to="about">{t('About Beltaly')}</Link></div>
-          <div><h3>{t('Here to help')}</h3><Link to="contact">{t('Contact us')}</Link><Link to="faq">{t('FAQs')}</Link><Link to="shipping">{t('Shipping & returns')}</Link><Link to="orders">{t('Orders')}</Link><Link to="business">{t('Bulk & corporate orders')}</Link></div>
+          <div><h3>{t('Here to help')}</h3><Link to="contact">{t('Contact us')}</Link><Link to="faq">{t('FAQs')}</Link><Link to="shipping">{t('Shipping & returns')}</Link><Link to="orders">{t('Orders')}</Link><Link to="business">{t('Bulk & corporate orders')}</Link>{settings.business?.email && <a className="footer-mail" href={`mailto:${settings.business.email}`}><Mail size={14} /> {settings.business.email}</a>}</div>
           <div><h3>{t('The fine print')}</h3><Link to="privacy">{t('Privacy policy')}</Link><Link to="terms">{t('Terms of use')}</Link>{settings.gstin && <p className="hint">GSTIN: {settings.gstin}</p>}</div>
         </div>
         <div className="wrap footer-bottom"><span>© {new Date().getFullYear()} {settings.business?.legalName || 'Beltaly'}. {t('All prices in ₹, inclusive of taxes.')}</span><span className="pay-methods">{t('Cash on Delivery')} · {t('WhatsApp ordering')}{settings.methods.upi ? ' · UPI' : ''}</span></div>
