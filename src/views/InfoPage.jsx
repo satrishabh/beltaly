@@ -113,7 +113,7 @@ export default function InfoPage({ page }) {
       {page === 'privacy' && <>
         <p>We only collect what we need to deliver your order: your name, mobile number and delivery address. You choose to send these to us on WhatsApp when you place an order.</p>
         <h2>What stays on your device.</h2>
-        <p>Your bag, wishlist, order history and language choice are saved in your own browser so they are still there next time. You can clear them at any time from your browser’s site settings. This site has no advertising or tracking cookies.</p>
+        <p>Your bag, wishlist, order history, language choice and (if you tick “Remember my details”) your delivery details are saved in your own browser so they are still there next time. You can clear them at any time from your browser’s site settings. This site has no advertising or tracking cookies.</p>
         <h2>Third parties.</h2>
         <p>WhatsApp, UPI apps and payment providers you choose to use apply their own privacy policies. We never ask for your UPI PIN, OTP or card details.</p>
         <h2>Contact.</h2>

@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react';
 import { ArrowRight, Banknote, BadgeCheck, Gift, MessageCircle, Ruler, Truck } from 'lucide-react';
 import { banners, categories, collections, discountPercent, getProduct, imageUrl, money, products, settings } from '../catalog.js';
 import { useT } from '../i18n.js';
+import { readViewed } from '../storage.js';
 import { Link, ProductGrid, href, productHref } from './shared.jsx';
 
 const lowestPrice = Math.min(...products.map((product) => product.price));
@@ -11,6 +13,18 @@ export default function Home({ saved, onToggleSaved }) {
   const bestsellers = collections.find((collection) => collection.id === 'bestsellers');
   const featured = bestsellers?.productIds.length ? bestsellers.productIds.map(getProduct) : products.slice(0, 4);
   const hero = products.find((product) => product.badge === 'BESTSELLER') ?? products[0];
+  const slides = [hero, ...products.filter((product) => product !== hero)];
+  const [slide, setSlide] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [viewed] = useState(() => readViewed().map(getProduct).filter(Boolean));
+  const current = slides[slide];
+
+  // Rotate the hero product every 5 seconds, unless the shopper is hovering or prefers less motion.
+  useEffect(() => {
+    if (paused || slides.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const timer = window.setInterval(() => setSlide((index) => (index + 1) % slides.length), 5000);
+    return () => window.clearInterval(timer);
+  }, [paused, slides.length]);
   const combo = products.find((product) => product.category === 'gifts');
 
   return (
@@ -26,10 +40,14 @@ export default function Home({ saved, onToggleSaved }) {
               <a className="btn btn--ghost" href={productHref(hero)}>View the bestseller</a>
             </div>
           </div>
-          <a className="hero-product" href={productHref(hero)} aria-label={hero.name}>
-            <img src={imageUrl(hero.images[0])} alt={hero.name} width="900" height="900" fetchpriority="high" />
-            <span className="hero-tag"><small>Bestseller</small><b>{money(hero.price)}</b></span>
-          </a>
+          <div className="hero-stage" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}>
+            <a className="hero-product" href={productHref(current)} aria-label={`${current.name}, ${money(current.price)}`}>
+              {slides.map((product, index) => <img key={product.id} className={index === slide ? 'is-on' : ''} src={imageUrl(product.images[0])} alt="" width="900" height="900" fetchpriority={index === 0 ? 'high' : 'low'} loading={index === 0 ? 'eager' : 'lazy'} />)}
+              <span className="hero-tag"><small>{current.badge || 'Beltaly'}</small><b>{money(current.price)}</b>{discountPercent(current) > 0 && <em>{discountPercent(current)}% off</em>}</span>
+            </a>
+            <p className="hero-name">{current.name}</p>
+            {slides.length > 1 && <div className="hero-dots" role="tablist" aria-label="Featured belts">{slides.map((product, index) => <button key={product.id} role="tab" aria-selected={index === slide} aria-label={product.name} className={index === slide ? 'on' : ''} onClick={() => setSlide(index)} />)}</div>}
+          </div>
         </div>
       </section>
 
@@ -40,6 +58,15 @@ export default function Home({ saved, onToggleSaved }) {
           <span><BadgeCheck size={22} /><b>Genuine leather</b><small>Metal buckles</small></span>
           <span><MessageCircle size={22} /><b>WhatsApp support</b><small>Talk to a real person</small></span>
         </div>
+
+        {viewed.length > 0 && (
+          <section className="section section--tight recent">
+            <h2 className="section-title">Pick up where you left off</h2>
+            <div className="recent-row">
+              {viewed.slice(0, 6).map((product) => <a key={product.id} href={productHref(product)}><img src={imageUrl(product.images[0])} alt="" width="120" height="120" /><span>{product.name}</span><b>{money(product.price)}</b></a>)}
+            </div>
+          </section>
+        )}
 
         <section className="section">
           <h2 className="section-title">Shop by category</h2>

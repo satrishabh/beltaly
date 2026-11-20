@@ -4,6 +4,7 @@ import { prepareOrder } from '../api.js';
 import { discountPercent, getProduct, imageUrl, money, products, settings } from '../catalog.js';
 import { PAYMENT_METHODS, orderSummary, paymentLinkFor, totals, upiUrl, whatsappUrl } from '../commerce.js';
 import { useT } from '../i18n.js';
+import { STORAGE_KEYS, readCustomer, writeJson } from '../storage.js';
 import { Link, productHref } from './shared.jsx';
 
 const enabledMethods = Object.keys(PAYMENT_METHODS).filter((method) => settings.methods[method]);
@@ -11,7 +12,8 @@ const storeReady = /^\d{10,15}$/.test(settings.whatsapp);
 
 export default function Checkout({ cartItems, onUpdateQuantity, onRemove, onOrderSent }) {
   const t = useT();
-  const [customer, setCustomer] = useState({ name: '', phone: '', address: '', pincode: '' });
+  const [customer, setCustomer] = useState(() => readCustomer() ?? { name: '', phone: '', address: '', pincode: '' });
+  const [remember, setRemember] = useState(true);
   const [method, setMethod] = useState(enabledMethods[0] || 'whatsapp');
   const [error, setError] = useState('');
   const [pending, setPending] = useState(false);
@@ -45,6 +47,7 @@ export default function Checkout({ cartItems, onUpdateQuantity, onRemove, onOrde
     setQr('');
     try {
       setOrder(await prepareOrder({ items: cartItems, customer, method }));
+      writeJson(STORAGE_KEYS.customer, remember ? customer : null);
     } catch (problem) {
       setError(problem?.message || 'Something went wrong. Please try again.');
     } finally {
@@ -111,6 +114,7 @@ export default function Checkout({ cartItems, onUpdateQuantity, onRemove, onOrde
                 <label className="full">{t('Delivery address')}<textarea autoComplete="street-address" required rows={3} maxLength={600} {...field('address')} /></label>
                 <label>{t('Pincode')}<input autoComplete="postal-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required placeholder={t('6-digit pincode')} {...field('pincode')} /></label>
               </div>
+              <label className="remember"><input type="checkbox" checked={remember} onChange={(event) => setRemember(event.target.checked)} /> Remember my details on this device</label>
               <fieldset>
                 <legend>{t('How would you like to order?')}</legend>
                 {enabledMethods.map((key) => <label key={key}><input type="radio" name="method" value={key} checked={method === key} onChange={() => { setMethod(key); setOrder(null); }} /> {t(PAYMENT_METHODS[key])}</label>)}

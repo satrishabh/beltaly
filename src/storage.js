@@ -8,6 +8,8 @@ export const STORAGE_KEYS = {
   saved: 'beltaly-saved-v2',
   orders: 'beltaly-orders-v2',
   language: 'beltaly-language',
+  viewed: 'beltaly-viewed',
+  customer: 'beltaly-customer',
 };
 
 function readJson(key, fallback) {
@@ -65,4 +67,22 @@ export function readLanguage() {
   } catch {
     return 'en';
   }
+}
+
+// Product ids the shopper opened most recently, newest first.
+export function readViewed() {
+  const stored = readJson(STORAGE_KEYS.viewed, []);
+  return Array.isArray(stored) ? stored.filter((id) => products.some((product) => product.id === id)).slice(0, 8) : [];
+}
+
+export function rememberViewed(productId) {
+  writeJson(STORAGE_KEYS.viewed, [productId, ...readViewed().filter((id) => id !== productId)].slice(0, 8));
+}
+
+// Delivery details the shopper chose to remember on this device.
+export function readCustomer() {
+  const stored = readJson(STORAGE_KEYS.customer, null);
+  if (!stored || typeof stored !== 'object') return null;
+  const text = (value, max) => (typeof value === 'string' ? value.slice(0, max) : '');
+  return { name: text(stored.name, 100), phone: text(stored.phone, 10).replace(/\D/g, ''), address: text(stored.address, 600), pincode: text(stored.pincode, 6).replace(/\D/g, '') };
 }

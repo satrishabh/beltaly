@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ArrowUpRight, Check, Heart, Home as HomeIcon, LayoutGrid, MessageCircle, Minus, Package, Plus, Search, ShoppingBag, Truck, X } from 'lucide-react';
+import { ArrowUpRight, Check, Heart, Home as HomeIcon, LayoutGrid, MessageCircle, Minus, Package, Plus, ShoppingBag, Truck, X } from 'lucide-react';
 import ErrorBoundary from './ErrorBoundary.jsx';
 import { categories, discountPercent, getProduct, imageUrl, money, products, settings } from './catalog.js';
 import { totals, validateItems, whatsappUrl } from './commerce.js';
@@ -11,6 +11,7 @@ import Checkout from './views/Checkout.jsx';
 import Home from './views/Home.jsx';
 import InfoPage, { INFO_PAGES } from './views/InfoPage.jsx';
 import ProductPage from './views/ProductPage.jsx';
+import SearchBox from './views/SearchBox.jsx';
 import Shop from './views/Shop.jsx';
 import { Link, href, navigate, parseRoute, productHref } from './views/shared.jsx';
 import './styles.css';
@@ -151,6 +152,25 @@ function App() {
     return true;
   }
 
+  // Adds several bag lines in one step (used by "Make it a pair" on the product page).
+  function addManyToCart(lines) {
+    let next = [...cartItems];
+    for (const { productId, size, quantity = 1 } of lines) {
+      next = next.some((item) => sameLine(item, { productId, size }))
+        ? next.map((item) => (sameLine(item, { productId, size }) ? { ...item, quantity: clampQuantity(item.quantity + quantity) } : item))
+        : [...next, { productId, size, quantity: clampQuantity(quantity) }];
+    }
+    try {
+      validateItems(next, products);
+    } catch (error) {
+      setToast(error.message);
+      return false;
+    }
+    setCartItems(next);
+    setCartOpen(true);
+    return true;
+  }
+
   function updateQuantity(line, change) {
     const next = cartItems.map((item) => (sameLine(item, line) ? { ...item, quantity: item.quantity + change } : item)).filter((item) => item.quantity > 0);
     try {
@@ -189,18 +209,13 @@ function App() {
     if (added) setCartOpen(true);
   }
 
-  function submitSearch(event) {
-    event.preventDefault();
-    const term = String(new FormData(event.currentTarget).get('q') ?? '').trim();
-    navigate(href('shop', { q: term }));
-  }
 
   const currentCategory = resolved.view === 'product' ? resolved.product.category : route.query.get('category');
 
   let screen;
   if (resolved.view === 'home') screen = <Home saved={saved} onToggleSaved={toggleSaved} />;
   else if (resolved.view === 'shop') screen = <Shop query={route.query} saved={saved} onToggleSaved={toggleSaved} />;
-  else if (resolved.view === 'product') screen = <ProductPage key={resolved.product.id} product={resolved.product} saved={saved} onToggleSaved={toggleSaved} onAddToCart={addToCart} />;
+  else if (resolved.view === 'product') screen = <ProductPage key={resolved.product.id} product={resolved.product} saved={saved} onToggleSaved={toggleSaved} onAddToCart={addToCart} onAddMany={addManyToCart} />;
   else if (resolved.view === 'cart') screen = <Checkout cartItems={cartItems} onUpdateQuantity={updateQuantity} onRemove={removeLine} onOrderSent={orderSent} />;
   else if (resolved.view === 'info') screen = <InfoPage page={resolved.page} />;
   else if (resolved.view === 'account') screen = <Account page={resolved.page} orders={orders} saved={saved} onToggleSaved={toggleSaved} onBuyAgain={buyAgain} />;
@@ -217,10 +232,7 @@ function App() {
             <picture><source srcSet={imageUrl('/brand/mark-3d.webp')} type="image/webp" /><img className="logo-mark" src={imageUrl('/brand/mark-3d.png')} alt="" width="192" height="182" /></picture>
             <span className="logo-word">BELTALY<small>GENUINE LEATHER</small></span>
           </Link>
-          <form className="header-search" role="search" onSubmit={submitSearch}>
-            <input name="q" type="search" key={route.query.get('q') ?? ''} defaultValue={route.query.get('q') ?? ''} aria-label={t('Search Beltaly')} placeholder={t('Search by name, material, colour or occasion')} />
-            <button type="submit" aria-label={t('search')}><Search size={18} /></button>
-          </form>
+          <SearchBox className="header-search" initial={route.query.get('q') ?? ''} />
           <div className="actions">
             <button className="lang-toggle" onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')} aria-label={language === 'hi' ? 'Switch to English' : 'हिन्दी में बदलें'}>{language === 'hi' ? 'EN' : 'हिं'}</button>
             <Link className="head-link" to="orders"><Package size={19} /><span>{t('Orders')}</span></Link>
@@ -228,10 +240,7 @@ function App() {
             <button className={`head-link bag-pill ${clicked ? 'is-clicked' : ''}`} onClick={() => setCartOpen(true)} aria-label={`${t('Bag')}, ${cartCount}`}><span className="nav-bag"><ShoppingBag size={20} />{cartCount > 0 && <span className="dot-count">{cartCount}</span>}</span><span>{t('Bag')}</span></button>
           </div>
         </div>
-        <form className="mobile-search wrap" role="search" onSubmit={submitSearch}>
-          <Search size={17} />
-          <input name="q" type="search" key={route.query.get('q') ?? ''} defaultValue={route.query.get('q') ?? ''} aria-label={t('Search Beltaly')} placeholder="Search belts" />
-        </form>
+        <div className="wrap mobile-search-wrap"><SearchBox className="mobile-search" initial={route.query.get('q') ?? ''} placeholder="Search belts" showButton={false} /></div>
       </header>
       <nav className="catbar" aria-label="Categories">
         <div className="wrap catbar-inner">

@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowUpRight, Banknote, BadgeCheck, Gift, Heart, MapPin, MessageCircle, Ruler, ShoppingBag, X, Zap, ZoomIn } from 'lucide-react';
+import { ArrowUpRight, Banknote, BadgeCheck, Gift, Heart, MapPin, MessageCircle, Plus, Ruler, Share2, ShoppingBag, X, Zap, ZoomIn } from 'lucide-react';
 import { discountPercent, getCategory, imageUrl, money, products, settings } from '../catalog.js';
 import { pincodeMessage, suggestedSize, whatsappUrl } from '../commerce.js';
 import { useT } from '../i18n.js';
-import { Link, ProductGrid, Rating, href, navigate } from './shared.jsx';
+import { rememberViewed } from '../storage.js';
+import { Link, ProductGrid, Rating, href, navigate, productHref } from './shared.jsx';
 
-export default function ProductPage({ product, saved, onToggleSaved, onAddToCart }) {
+export default function ProductPage({ product, saved, onToggleSaved, onAddToCart, onAddMany }) {
   const t = useT();
   const [image, setImage] = useState(0);
   const [size, setSize] = useState(null);
@@ -23,7 +24,33 @@ export default function ProductPage({ product, saved, onToggleSaved, onAddToCart
   const question = `Hi! I'd like to know more about ${product.name} (${product.id}).`;
   const isCombo = /combo/i.test(product.name);
 
-  useEffect(() => { document.title = `${product.name} | Beltaly`; }, [product]);
+  // Pair this belt with a different colour, preferring a single belt over the combo pack.
+  const partner = products.filter((item) => item.id !== product.id && item.colour !== product.colour && item.stock > 0)
+    .sort((a, b) => Number(/combo/i.test(a.name)) - Number(/combo/i.test(b.name)))[0];
+
+  useEffect(() => {
+    document.title = `${product.name} | Beltaly`;
+    rememberViewed(product.id);
+  }, [product]);
+
+  function addBundle() {
+    if (!size) {
+      setSizeError(true);
+      sizeBlock.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    onAddMany([{ productId: product.id, size }, { productId: partner.id, size: partner.sizes.includes(size) ? size : partner.sizes[0] }]);
+  }
+
+  async function share() {
+    const url = window.location.href.split('?')[0];
+    const text = `${product.name} for ${money(product.price)} on Beltaly`;
+    if (navigator.share) {
+      try { await navigator.share({ title: product.name, text, url }); } catch { /* cancelled */ }
+    } else {
+      window.open(`https://wa.me/?text=${encodeURIComponent(`${text}: ${url}`)}`, '_blank', 'noopener');
+    }
+  }
 
   // Shoppers must pick a size; the size block is highlighted if they try to buy without one.
   function buy(goToBag) {
@@ -74,7 +101,7 @@ export default function ProductPage({ product, saved, onToggleSaved, onAddToCart
         </div>
 
         <div className="pdp-info">
-          <p className="pdp-brand">Beltaly</p>
+          <div className="pdp-top"><p className="pdp-brand">Beltaly</p><button className="plain-button share-btn" onClick={share}><Share2 size={16} /> Share</button></div>
           <h1>{product.name}</h1>
           <div className="pdp-rating-row">
             <Rating value={product.rating} />
@@ -143,7 +170,25 @@ export default function ProductPage({ product, saved, onToggleSaved, onAddToCart
         </div>
       </div>
 
-      {related.length > 0 && <section className="section"><h2 className="section-title">You may also like</h2><ProductGrid items={related} saved={saved} onToggleSaved={onToggleSaved} /></section>}
+      {partner && (
+        <section className="section bundle">
+          <h2 className="section-title">Make it a pair</h2>
+          <div className="bundle-box panel">
+            <div className="bundle-items">
+              <div className="bundle-item"><img src={imageUrl(product.images[0])} alt="" width="140" height="140" /><span>This item: {product.name}</span><b>{money(product.price)}</b></div>
+              <Plus size={22} className="bundle-plus" aria-hidden="true" />
+              <a className="bundle-item" href={productHref(partner)}><img src={imageUrl(partner.images[0])} alt="" width="140" height="140" /><span>{partner.name}</span><b>{money(partner.price)}</b></a>
+            </div>
+            <div className="bundle-total">
+              <p>Both belts: <b>{money(product.price + partner.price)}</b> <del>{money(product.mrp + partner.mrp)}</del></p>
+              <p className="hint">{size ? `Both in size ${size} in.` : 'Select a size above first.'}{product.price + partner.price >= settings.freeShippingAbove ? ' Free delivery.' : ''}</p>
+              <button className="btn btn--cart" disabled={!product.stock} onClick={addBundle}><ShoppingBag size={17} /> Add both to bag</button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {related.length > 0 && <section className="section section--tight"><h2 className="section-title">You may also like</h2><ProductGrid items={related} saved={saved} onToggleSaved={onToggleSaved} /></section>}
 
       <div className="buy-bar">
         <div className="buy-bar-price"><b>{money(product.price)}</b>{off > 0 && <small><del>{money(product.mrp)}</del> {off}% off</small>}</div>
