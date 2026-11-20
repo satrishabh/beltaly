@@ -28,10 +28,15 @@ export default function Home({ saved, onToggleSaved }) {
           </div>
           <div className="tiny-note">CONSIDERED DETAILS. &nbsp; HONEST CHARACTER. &nbsp; EVERYDAY EASE.</div>
         </div>
-        <div className="hero-art">
-          <img src={imageUrl('/products/hero.svg')} alt="Studio illustration of a tan leather belt with brass buckle" width="900" height="900" fetchpriority="high" />
-          <div className="circle-seal">Small details.<br />Big character.<br />✳</div>
-          <div className="art-caption"><span>THE EVERYDAY EDIT — 01</span><span>BELTALY STUDIO</span></div>
+        <div className="hero-art hero-art--logo">
+          <div className="logo-stage">
+            <picture>
+              <source srcSet={imageUrl('/brand/logo-3d.webp')} type="image/webp" />
+              <img className="logo-3d" src={imageUrl('/brand/logo-3d.png')} alt="Beltaly — Genuine Leather" width="900" height="582" fetchpriority="high" />
+            </picture>
+          </div>
+          <div className="circle-seal">Genuine<br />leather.<br />✳</div>
+          <div className="art-caption"><span>THE BELTALY MARK</span><span>MADE FOR INDIA</span></div>
         </div>
       </section>
 
@@ -72,7 +77,7 @@ export default function Home({ saved, onToggleSaved }) {
       ))}
 
       <section className="section editorial">
-        <div className="editorial-art"><img src={imageUrl('/products/detail-0.svg')} alt="Belt sizing studio illustration" width="900" height="900" loading="lazy" /></div>
+        <div className="editorial-art editorial-art--photo"><img src={imageUrl('/products/plate-buckle-tan.webp')} alt="Tan Beltaly leather belt with a plate buckle on its gift box" width="900" height="900" loading="lazy" /></div>
         <div>
           <p className="eyebrow">A LITTLE GUIDE TO A GREAT FIT</p>
           <h2>{t('sizeTitle')}</h2>

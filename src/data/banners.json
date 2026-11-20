@@ -1,10 +1,10 @@
 [
   {
-    "id": "wedding",
-    "eyebrow": "THE OCCASION EDIT",
-    "title": "For moments worth dressing up for.",
-    "description": "From the first invitation to the last dance. Discover details that make the occasion yours.",
-    "href": "/shop/?category=ethnic",
+    "id": "combo",
+    "eyebrow": "THE COMBO PACK",
+    "title": "Two belts. One easy gift.",
+    "description": "Textured black and brown genuine leather, together in one pack. One for the office, one for the weekend.",
+    "href": "/shop/?category=gifts",
     "enabled": true
   }
 ]

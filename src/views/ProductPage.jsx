@@ -60,13 +60,13 @@ export default function ProductPage({ product, saved, onToggleSaved, onAddToCart
         </div>
 
         <div>
-          <p className="eyebrow">{t(product.material)} / {product.width} MM / {t(product.buckle)}</p>
+          <p className="eyebrow">{t(product.material)}{product.width ? ` / ${product.width} MM` : ''} / {t(product.buckle)} buckle</p>
           <div className="title-row">
             <h1>{product.name}</h1>
             <button className={`save-toggle save-toggle--inline ${isSaved ? 'is-saved' : ''}`} aria-pressed={isSaved} aria-label={isSaved ? 'Remove from saved' : t('Save for later')} onClick={() => onToggleSaved(product.id)}><Heart size={18} fill={isSaved ? 'currentColor' : 'none'} /></button>
           </div>
           <div className="detail-price">{money(product.price)} {off > 0 && <><del>{money(product.mrp)}</del> <span className="badge badge--static">{off}% {t('off').toUpperCase()}</span></>}</div>
-          <p className="hint">{t('tax')}</p>
+          <p className="hint">{t('tax')}{product.rating ? <> · <span className="rating">★ {product.rating.toFixed(1)}</span> on Amazon</> : null}</p>
           <p>{product.description}</p>
           <p className={product.stock ? 'stock' : 'error'}>{product.stock ? `● ${t('In stock')}` : t('Out of stock')}</p>
 
@@ -83,7 +83,10 @@ export default function ProductPage({ product, saved, onToggleSaved, onAddToCart
             <button className="btn mobile-add" type="submit" disabled={!product.stock}>{t('add')} <Plus size={16} /></button>
           </form>
 
-          <a className="text-link" href={settings.whatsapp ? whatsappUrl(settings.whatsapp, question) : '#/contact'} target={settings.whatsapp ? '_blank' : undefined} rel="noopener noreferrer">{t('Ask about this belt on WhatsApp')} <ArrowUpRight size={14} /></a>
+          <div className="link-row">
+            <a className="text-link" href={settings.whatsapp ? whatsappUrl(settings.whatsapp, question) : '#/contact'} target={settings.whatsapp ? '_blank' : undefined} rel="noopener noreferrer">{t('Ask about this belt on WhatsApp')} <ArrowUpRight size={14} /></a>
+            {product.amazon && <a className="text-link" href={product.amazon} target="_blank" rel="noopener noreferrer">Also on Amazon <ArrowUpRight size={14} /></a>}
+          </div>
 
           <div className="pincode-check">
             <label htmlFor="pincode">{t('delivery')}</label>

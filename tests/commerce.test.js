@@ -9,10 +9,17 @@ const first = products[0];
 const item = { productId: first.id, size: first.sizes[1], quantity: 1 };
 const customer = { name: 'Test Shopper', phone: '9876543210', address: '10 Sample Street', pincode: '110001' };
 
-test('catalog data is valid: 24 products, known categories, INR prices ₹499–₹4,999', () => {
+test('catalog data is valid and every product is shown', () => {
   assert.deepEqual(findProductProblems(products, categories.map((c) => c.id)), []);
-  assert.equal(products.length, 24);
-  for (const p of products) assert.ok(p.price >= 499 && p.price <= 4999, `${p.id} price ${p.price}`);
+  assert.ok(products.length >= 1);
+  for (const p of products) assert.ok(p.price > 0 && p.mrp >= p.price, `${p.id} price ${p.price}`);
+  for (const p of products) assert.ok(categories.some((c) => c.id === p.category), `${p.id} category hidden`);
+});
+
+test('amazon links must be amazon.in', () => {
+  const broken = structuredClone(products);
+  broken[0].amazon = 'https://evil.example/dp/1';
+  assert.ok(findProductProblems(broken, categories.map((c) => c.id)).some((p) => /amazon/.test(p)));
 });
 
 test('validation names the spreadsheet row and field', () => {
@@ -34,7 +41,7 @@ test('shipping threshold and COD charge are added to the total', () => {
   assert.equal(single.shipping, first.price < settings.freeShippingAbove ? settings.shippingFee : 0);
   assert.equal(single.cod, settings.codCharge);
   assert.equal(single.total, single.subtotal + single.shipping + single.cod);
-  assert.equal(totals([{ ...item, quantity: 3 }], products, settings).shipping, 0);
+  assert.equal(totals([{ ...item, quantity: Math.ceil(settings.freeShippingAbove / first.price) }], products, settings).shipping, 0);
   assert.equal(totals([], products, settings, 'cod').total, 0);
 });
 
@@ -109,6 +116,7 @@ test('search matches multiple words and small typos', () => {
   const tan = products.find((p) => p.colour === 'Tan');
   assert.ok(matchesSearch(tan, 'tan'));
   assert.ok(matchesSearch(tan, `${tan.colour} ${tan.material}`));
-  assert.ok(matchesSearch(products.find((p) => p.category === 'ethnic'), 'weding'));
+  assert.ok(matchesSearch(tan, 'lether'));
+  assert.ok(matchesSearch(products.find((p) => p.category === 'gifts'), 'combo'));
   assert.ok(!matchesSearch(tan, 'zzzz'));
 });

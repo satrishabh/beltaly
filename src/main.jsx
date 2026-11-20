@@ -204,12 +204,12 @@ function App() {
 
       <header className="wrap header">
         <Link className="logo" to="" aria-label="Beltaly home">
-          {settings.logo ? <img src={imageUrl(settings.logo)} alt="Beltaly" width="120" height="40" /> : <><span className="buckle" aria-hidden="true" />BELTALY</>}
-          <sup>®</sup>
+          <picture><source srcSet={imageUrl('/brand/mark-3d.webp')} type="image/webp" /><img className="logo-mark" src={imageUrl('/brand/mark-3d.png')} alt="" width="192" height="182" /></picture>
+          <span className="logo-word">BELTALY<small>GENUINE LEATHER</small></span>
         </Link>
         <nav aria-label="Main">
           <Link to="shop">{t('shop')}</Link>
-          <Link to="shop" params={{ category: 'ethnic' }}>{t('The occasion edit')}</Link>
+          {categories.map((category) => <Link key={category.id} to="shop" params={{ category: category.id }}>{t(category.name)}</Link>)}
           <Link to="size-guide">{t('guide')}</Link>
           <Link to="about">{t('story')}</Link>
         </nav>
@@ -236,14 +236,14 @@ function App() {
 
       <footer className="wrap">
         <div className="footer">
-          <div><Link className="logo" to=""><span className="buckle" aria-hidden="true" />BELTALY</Link><p>{t('footer')}</p><small>DESIGNED FOR MODERN INDIA</small></div>
+          <div><Link className="footer-logo" to="" aria-label="Beltaly home"><picture><source srcSet={imageUrl('/brand/logo-3d.webp')} type="image/webp" /><img src={imageUrl('/brand/logo-3d.png')} alt="Beltaly — Genuine Leather" width="220" height="142" loading="lazy" /></picture></Link><p>{t('footer')}</p><small>DESIGNED FOR MODERN INDIA</small></div>
           <div><h3>{t('Explore')}</h3><Link to="shop">{t('shop')}</Link>{categories.slice(0, 3).map((category) => <Link key={category.id} to="shop" params={{ category: category.id }}>{t(category.name)}</Link>)}<Link to="size-guide">{t('guide')}</Link><Link to="about">{t('about')}</Link></div>
           <div><h3>{t('Here to help')}</h3><Link to="contact">{t('contact')}</Link><Link to="faq">{t('faq')}</Link><Link to="shipping">{t('shipping')}</Link><Link to="business">{t('Business')}</Link></div>
           <div><h3>{t('The fine print')}</h3><Link to="privacy">{t('privacy')}</Link><Link to="terms">{t('terms')}</Link><p className="hint">{settings.gstin ? `GSTIN: ${settings.gstin}` : 'GSTIN: owner setup pending'}</p></div>
         </div>
         <div className="footer-bottom"><span>© {new Date().getFullYear()} Beltaly. A little detail goes a long way.</span><span>₹ INR · Made for India</span></div>
       </footer>
-      <div className="sample-note">{t('sample')}</div>
+      {/^https:\/\/(www\.)?amazon\.in\//.test(settings.amazonStore) && <div className="sample-note">Also on Amazon: <a className="text-link" href={settings.amazonStore} target="_blank" rel="noopener noreferrer">shop Beltaly on Amazon.in <ArrowUpRight size={12} /></a></div>}
 
       <a className="whatsapp" href={contactHref} {...contactTarget} aria-label="Contact us on WhatsApp"><ArrowUpRight size={14} /> {t('Let’s talk')}</a>
 

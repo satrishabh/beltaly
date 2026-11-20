@@ -69,7 +69,7 @@ export default function InfoPage({ page }) {
         <p>We believe the smallest detail can bring an outfit together. Beltaly is a belt and leather goods company, beginning with considered belts for everyday wear. Wallets are our next chapter, coming soon.</p>
         <h2>Crafted leather. Modern India.</h2>
         <p>Deep black. Warm gold. An everyday ease that moves from office mornings to wedding evenings. Our design takes its cues from the belt itself: a continuous line, honest stitching, and a buckle that brings it all together.</p>
-        <p>This preview contains illustrative products and original drawings. Material details and real product photography will be published once verified.</p>
+        <p>Beltaly belts are genuine leather with metal buckles, and many arrive in the Beltaly gift box. You can also find us on Amazon.in.</p>
         <Link className="btn" to="shop">Find your everyday <ArrowUpRight size={15} /></Link>
       </>}
 
@@ -107,7 +107,7 @@ export default function InfoPage({ page }) {
       </>}
 
       {page === 'terms' && <>
-        <p>This is a demonstration catalogue. Product descriptions, images and prices are samples and must be verified before commercial use.</p>
+        <p>Prices on this site are in Indian rupees and include all taxes. Shipping and Cash on Delivery charges are shown before you send an order request.</p>
         <h2>Order requests & payments.</h2>
         <p>A BLT reference identifies a request; it is not an invoice, a stock reservation or acceptance of an order. The store accepts requests and verifies payments itself. Prices and stock may change before acceptance.</p>
         <h2>Store information.</h2>

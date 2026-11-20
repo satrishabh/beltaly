@@ -28,35 +28,38 @@ export function findProductProblems(products, categoryIds) {
     if (!Number.isInteger(p?.stock) || p.stock < 0) problems.push(`${where} stock must be 0 or more`);
     if (!Array.isArray(p?.images) || !p.images.length || !p.images.every(isText)) problems.push(`${where} images needs at least one image`);
     if (p?.paymentLink && !/^https:\/\//.test(p.paymentLink)) problems.push(`${where} paymentLink must start with https://`);
+    if (p?.amazon && !/^https:\/\/(www\.)?amazon\.in\//.test(p.amazon)) problems.push(`${where} amazon must be an https://www.amazon.in/ link`);
   });
   return problems;
 }
 
-export const categories = rawCategories;
-const categoryIds = categories.map((category) => category.id);
+const categoryIds = rawCategories.map((category) => category.id);
 const productProblems = findProductProblems(rawProducts, categoryIds);
 if (productProblems.length && typeof console !== 'undefined') console.warn(`Beltaly catalog: ${productProblems.length} problem(s)\n${productProblems.join('\n')}`);
 const badIds = new Set(productProblems.map((problem) => problem.match(/\((.+?)\)/)?.[1]).filter(Boolean));
 export const products = rawProducts.filter((product) => !badIds.has(product.id));
+// Only categories that currently have products are shown in menus and filters.
+export const categories = rawCategories.filter((category) => products.some((product) => product.category === category.id));
 
 export const settings = rawSettings;
 export const collections = rawCollections.map((collection) => ({ ...collection, productIds: collection.productIds.filter((id) => products.some((product) => product.id === id)) }));
 export const banners = rawBanners.filter((banner) => banner.enabled && /^\/(?!\/)/.test(banner.href));
 
 export const getProduct = (id) => products.find((product) => product.id === id) || null;
-export const getCategory = (id) => categories.find((category) => category.id === id) || null;
+export const getCategory = (id) => rawCategories.find((category) => category.id === id) || null;
 export const discountPercent = (product) => (product.mrp > product.price ? Math.round((1 - product.price / product.mrp) * 100) : 0);
 
-export const swatchColours = { Tan: '#a16b3e', Black: '#302b28', Brown: '#65422c', Cognac: '#a34f2c' };
+export const swatchColours = { Tan: '#a16b3e', Black: '#302b28', Brown: '#65422c', Cognac: '#a34f2c', 'Black & Brown': 'linear-gradient(90deg, #302b28 50%, #65422c 50%)' };
 
 // Filter options derived from the data, so new materials or buckles appear automatically.
-const unique = (key) => [...new Set(products.map((product) => String(product[key])))];
+// A filter is shown only when products differ on it (no point filtering 3 belts by one material).
+const unique = (key) => [...new Set(products.map((product) => product[key]).filter((value) => value !== undefined && value !== null && value !== '').map(String))];
 export const filterFields = [
   { name: 'material', label: 'Material', values: unique('material') },
   { name: 'colour', label: 'Colour', values: unique('colour') },
   { name: 'width', label: 'Width (mm)', values: unique('width').sort((a, b) => a - b) },
   { name: 'buckle', label: 'Buckle', values: unique('buckle') },
-];
+].filter((field) => field.values.length > 1);
 
 export function matchesFilters(product, filters) {
   if (filters.category && product.category !== filters.category) return false;
@@ -91,7 +94,7 @@ export function matchesSearch(product, term) {
   const words = String(term ?? '').trim().toLowerCase().split(/\s+/).filter(Boolean);
   if (!words.length) return true;
   const category = getCategory(product.category)?.name ?? '';
-  const haystack = `${product.name} ${category} ${product.material} ${product.colour} ${product.buckle} ${product.description}`.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+  const haystack = `${product.name} ${category} ${product.material} ${product.colour} ${product.buckle} ${product.badge ?? ''} ${product.description}`.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
   return words.every((word) => haystack.some((target) => closeEnough(word, target)));
 }
 

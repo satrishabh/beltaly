@@ -36,7 +36,7 @@ export function ProductCard({ product, saved, onToggleSaved }) {
           <img src={imageUrl(product.images[0])} alt={`${product.name}, ${product.colour} ${product.material} belt`} width="600" height="600" loading="lazy" />
           {(product.badge || !product.stock) && <span className="badge">{!product.stock ? t('Out of stock').toUpperCase() : product.badge}</span>}
         </div>
-        <p className="product-meta">{t(product.material)} · {product.width} mm</p>
+        <p className="product-meta">{t(product.material)}{product.width ? ` · ${product.width} mm` : ` · ${t(product.buckle)} buckle`}{product.rating ? <span className="rating"> · ★ {product.rating.toFixed(1)}</span> : null}</p>
         <h3>{product.name}</h3>
         <div className="price">{money(product.price)} {off > 0 && <><del>{money(product.mrp)}</del> <span className="off">{off}% {t('off')}</span></>}</div>
         <div><span className="swatch" style={{ background: swatchColours[product.colour] || '#8B5A2B' }} /><span className="hint">{t(product.colour)}</span></div>
