@@ -3,7 +3,7 @@
   "logo": "",
   "tagline": "Good things come full circle.",
   "announcement": "A better fit for every day. Free shipping on orders above ₹1,999.",
-  "whatsapp": "",
+  "whatsapp": "919310264372",
   "upiVpa": "",
   "payeeName": "Beltaly",
   "gstin": "",
@@ -22,7 +22,7 @@
   ],
   "methods": {
     "whatsapp": true,
-    "upi": true,
+    "upi": false,
     "paymentLink": false,
     "cod": true
   },
