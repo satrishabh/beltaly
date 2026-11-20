@@ -91,9 +91,19 @@ function App() {
 
   // Path routing: in-site links are handled here (no page reload); back/forward, refresh and shared links all work.
   useEffect(() => {
-    const onLocation = () => {
+    if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
+    // Old links without the trailing slash (/shop/formal/x) are tidied to the canonical form (/shop/formal/x/).
+    if (window.location.pathname !== '/' && !window.location.pathname.endsWith('/')) {
+      window.history.replaceState(window.history.state, '', `${window.location.pathname}/${window.location.search}`);
+      lastPath.current = window.location.pathname;
+    }
+    const onLocation = (event) => {
       const path = window.location.pathname;
-      if (path !== lastPath.current) window.scrollTo({ top: 0 });
+      // Back/forward returns to where the shopper was; a new page starts at the top.
+      const target = event?.type === 'popstate' ? (window.history.state?.scroll ?? 0) : 0;
+      if (path !== lastPath.current || event?.type === 'popstate') {
+        window.requestAnimationFrame(() => window.requestAnimationFrame(() => window.scrollTo({ top: target, behavior: 'instant' })));
+      }
       lastPath.current = path;
       setRoute(parseRoute());
       setCartOpen(false);

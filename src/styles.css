@@ -1030,3 +1030,43 @@ html:not([lang="en"]) .lux-sign { font-style: normal; }
 @media (max-width: 380px) {
   .lux-categories { grid-template-columns: 1fr 1fr; }
 }
+
+/* ======================================================================
+   BUYING FIXES & POLISH
+   ====================================================================== */
+/* Page change: a quick fade only. A transform here made <main> the containing block for
+   position: fixed children, so the phone buy bar scrolled away with the page instead of staying on screen. */
+@keyframes page-in { from { opacity: 0; } to { opacity: 1; } }
+.page-enter { animation: page-in .22s ease-out; }
+
+/* Buy now is the main action: gold. Add to bag sits beside it in espresso. */
+.buy-buttons .btn--buy, .buy-bar .btn--buy { background: var(--gold); border-color: var(--gold); color: #17140f; box-shadow: 0 6px 18px rgb(201 161 74 / .35); }
+.buy-buttons .btn--buy:hover, .buy-bar .btn--buy:hover { background: var(--gold-strong); border-color: var(--gold-strong); filter: none; }
+.buy-buttons .btn--cart, .buy-bar .btn--cart { background: var(--espresso); border-color: var(--espresso); color: #f3ece1; }
+:root[data-theme="dark"] .buy-buttons .btn--cart, :root[data-theme="dark"] .buy-bar .btn--cart { background: transparent; border-color: var(--line-strong); color: var(--ink); }
+
+@media (min-width: 701px) {
+  /* Keep the photo short enough that Add to bag and Buy now are on screen without scrolling (1366×768 laptops and up). */
+  .main-image { max-height: max(300px, calc(100vh - 340px)); margin-inline: auto; }
+  .gallery { padding-bottom: 4px; }
+  .buy-buttons { margin-top: 4px; }
+}
+
+/* Phones: the buy bar is pinned above the bottom menu with a clear price, and stays readable in dark mode. */
+@media (max-width: 700px) {
+  .buy-bar { backdrop-filter: saturate(1.2) blur(10px); background: color-mix(in srgb, var(--surface) 92%, transparent); border-top: 1px solid rgb(201 161 74 / .35); }
+  .buy-bar .btn { border-radius: 3px; letter-spacing: .04em; }
+  .buy-bar-price b { font-family: var(--sans); }
+}
+
+/* Product page details */
+.price-now { font-family: var(--sans); letter-spacing: -.01em; }
+.price-off { font-weight: 600; }
+.perks span { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.size-chips button { transition: border-color .15s, background .15s, color .15s; }
+.size-chips button:hover:not(.is-selected) { border-color: var(--gold); color: var(--gold-text); }
+
+/* Prerendered page text: shown to crawlers, link previews and anyone without JavaScript; the app replaces it. */
+.static-page { padding-block: 32px 48px; }
+.static-page img { max-width: 360px; border-radius: var(--radius-lg); background: var(--studio); }
+.static-page ul { padding-left: 18px; }

@@ -15,15 +15,22 @@ export function parseRoute(location = window.location) {
   return { parts, query: new URLSearchParams(location.search) };
 }
 
+// Paths end in a slash (/shop/, /cart/) because GitHub Pages answers /shop with a 301 redirect to /shop/,
+// which made every refresh or shared link load twice.
 export const href = (path, params) => {
   const query = params ? new URLSearchParams(Object.entries(params).filter(([, value]) => value !== '' && value != null)).toString() : '';
-  return `/${path.replace(/^\//, '')}${query ? `?${query}` : ''}`;
+  const clean = path.replace(/^\/+|\/+$/g, '');
+  return `/${clean}${clean ? '/' : ''}${query ? `?${query}` : ''}`;
 };
 
 // Client-side navigation. replace=true swaps the history entry (used by filters, so Back leaves the shop).
+// The current scroll position is stored in the entry being left, so Back returns to the same spot.
 export function navigate(to, { replace = false } = {}) {
-  if (replace) window.history.replaceState(null, '', to);
-  else window.history.pushState(null, '', to);
+  if (replace) window.history.replaceState(window.history.state, '', to);
+  else {
+    window.history.replaceState({ ...window.history.state, scroll: window.scrollY }, '');
+    window.history.pushState({ scroll: 0 }, '', to);
+  }
   window.dispatchEvent(new Event('locationchange'));
 }
 

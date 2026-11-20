@@ -1,7 +1,7 @@
 // Runs after `vite build`. GitHub Pages only serves files, so for every page of the store this writes
 // dist/<path>/index.html: the same app, but with that page's own <title>, description, canonical URL,
 // share preview and (for products) Google product data. It also writes sitemap.xml, robots.txt and 404.html.
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import products from '../src/data/products.json' with { type: 'json' };
@@ -17,7 +17,7 @@ const escape = (text) => String(text).replace(/&/g, '&amp;').replace(/"/g, '&quo
 const pageUrl = (path) => `${SITE}${path === '/' ? '/' : `${path}/`}`;
 const inr = (value) => `₹${Number(value).toLocaleString('en-IN')}`;
 
-function render({ path, title, description, image = '/brand/logo-3d.png', type = 'website', jsonLd = [], noindex = false }) {
+function render({ path, title, description, image = '/og/home.jpg', type = 'website', jsonLd = [], noindex = false, body = '' }) {
   const url = pageUrl(path);
   const fullTitle = `${title} | Beltaly`;
   let html = template
@@ -28,9 +28,14 @@ function render({ path, title, description, image = '/brand/logo-3d.png', type =
     .replace(/<meta property="og:type" content="[^"]*"/, `<meta property="og:type" content="${type}"`)
     .replace(/<meta property="og:image" content="[^"]*"/, `<meta property="og:image" content="${SITE}${image}"`)
     .replace(/<meta property="og:url" content="[^"]*"/, `<meta property="og:url" content="${url}"`)
-    .replace(/<link rel="canonical" href="[^"]*"/, `<link rel="canonical" href="${url}"`);
+    .replace(/<link rel="canonical" href="[^"]*"/, `<link rel="canonical" href="${url}"`)
+    // Real text and links inside #root: search engines, link previews and no-JavaScript visitors read this.
+    // The app replaces it on start, and an inline style hides it once JavaScript is running (no flash).
+    .replace('<div id="root"></div>', `<div id="root">${staticPage(body)}</div>`);
   const extra = [
     noindex ? '<meta name="robots" content="noindex" />' : '',
+    image.endsWith('.jpg') ? '<meta property="og:image:width" content="1200" />\n    <meta property="og:image:height" content="630" />' : '',
+    `<meta name="twitter:image" content="${SITE}${image}" />`,
     ...jsonLd.map((data) => `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`),
   ].filter(Boolean).join('\n    ');
   if (extra) html = html.replace('</head>', `    ${extra}\n  </head>`);
@@ -41,6 +46,31 @@ function write(path, html) {
   const file = path === '/' ? join(dist, 'index.html') : join(dist, path, 'index.html');
   mkdirSync(dirname(file), { recursive: true });
   writeFileSync(file, html);
+}
+
+
+// ---------- Static page text ----------
+const link = (path, text) => `<a href="${path === '/' ? '/' : `${path}/`}">${escape(text)}</a>`;
+const productPath = (product) => `/shop/${product.category}/${product.slug}`;
+const ogImage = (product) => (existsSync(join(dist, 'og', `${product.slug}.jpg`)) ? `/og/${product.slug}.jpg` : product.images[0]);
+const priceText = (product) => `${inr(product.price)}${product.mrp > product.price ? ` <del>${inr(product.mrp)}</del> (${Math.round((1 - product.price / product.mrp) * 100)}% off)` : ''}`;
+const productList = () => `<ul>${products.map((product) => `<li>${link(productPath(product), product.name)} — ${priceText(product)}</li>`).join('')}</ul>`;
+const siteNav = () => `<nav aria-label="Site">${[link('/', 'Home'), link('/shop', 'All belts'), ...Object.entries(pages).map(([slug, page]) => link(`/${slug}`, page.title))].join(' · ')}</nav>`;
+const howToOrder = () => `<p>Order on this site with Cash on Delivery${settings.methods?.upi ? ' or UPI' : ''}, or on WhatsApp${settings.whatsapp ? ` (<a href="https://wa.me/${settings.whatsapp}">+${settings.whatsapp}</a>)` : ''}. Delivery ${inr(settings.shippingFee)} across India, free above ${inr(settings.freeShippingAbove)}.</p>`;
+function staticPage(body) {
+  if (!body) return '';
+  return `<div class="static-page wrap prose"><p><b>BELTALY</b> · Genuine leather</p>${body}${siteNav()}</div>`;
+}
+function productBody(product) {
+  const category = categories.find((item) => item.id === product.category);
+  return `<h1>${escape(product.name)}</h1>
+<img src="${product.images[0]}" alt="${escape(product.name)}" width="600" height="600" />
+<p><b>${priceText(product)}</b>, inclusive of all taxes. ${product.stock > 0 ? 'In stock.' : 'Out of stock.'}</p>
+<p>${escape(product.description)}</p>
+<ul><li>Material: ${escape(product.material)}</li><li>Colour: ${escape(product.colour)}</li><li>Buckle: ${escape(product.buckle)}</li><li>Sizes: ${product.sizes.join(', ')} inches (waist)</li><li>Category: ${escape(category?.name ?? '')}</li></ul>
+<p>Care: ${escape(product.care)}</p>
+${howToOrder()}
+<h2>More belts</h2>${productList()}`;
 }
 
 const organization = {
@@ -55,9 +85,11 @@ const organization = {
 
 const lowest = Math.min(...products.map((product) => product.price));
 const routes = [
-  { path: '/', title: 'Genuine leather belts for men', description: `Genuine leather belts by Beltaly from ${inr(lowest)}: plate buckle belts and combo packs in sizes 28–44. Cash on Delivery and WhatsApp ordering across India.`, jsonLd: [organization, { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Beltaly', url: SITE }] },
-  { path: '/shop', title: 'Shop leather belts', description: `All Beltaly genuine leather belts and combo packs, from ${inr(lowest)}. Sizes 28–44, Cash on Delivery across India.` },
-  ...Object.entries(pages).map(([slug, page]) => ({ path: `/${slug}`, title: page.title, description: page.description })),
+  { path: '/', title: 'Genuine leather belts for men', description: `Genuine leather belts by Beltaly from ${inr(lowest)}: plate buckle belts and combo packs in sizes 28–44. Cash on Delivery and WhatsApp ordering across India.`, jsonLd: [organization, { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Beltaly', url: SITE }],
+    body: `<h1>Genuine leather belts for men</h1><p>Plate buckle belts and textured combo packs from ${inr(lowest)}, in gift-ready boxes.</p>${howToOrder()}<h2>Our belts</h2>${productList()}` },
+  { path: '/shop', title: 'Shop leather belts', description: `All Beltaly genuine leather belts and combo packs, from ${inr(lowest)}. Sizes 28–44, Cash on Delivery across India.`,
+    body: `<h1>Shop leather belts</h1>${productList()}${howToOrder()}` },
+  ...Object.entries(pages).map(([slug, page]) => ({ path: `/${slug}`, title: page.title, description: page.description, body: `<h1>${escape(page.heading ?? page.title)}</h1><p>${escape(page.description)}</p>${howToOrder()}` })),
   ...products.map((product) => {
     const category = categories.find((item) => item.id === product.category);
     const path = `/shop/${product.category}/${product.slug}`;
@@ -65,7 +97,8 @@ const routes = [
       path,
       title: product.name,
       description: `${product.name} at ${inr(product.price)}${product.mrp > product.price ? ` (M.R.P. ${inr(product.mrp)})` : ''}. ${product.description}`.slice(0, 300),
-      image: product.images[0],
+      image: ogImage(product),
+      body: productBody(product),
       type: 'product',
       jsonLd: [
         {
