@@ -90,7 +90,7 @@ export default function InfoPage({ page }) {
       {page === 'shipping' && <>
         <p className="account-panel">Sample policy for owner review. Verified dispatch times, return windows and refund timelines must be published before accepting orders.</p>
         <h2>Delivery areas & fees.</h2>
-        <p>Delivery is currently limited to the pincodes in the delivery checker. Standard shipping is {money(settings.shippingFee)}, free on orders of {money(settings.freeShippingAbove)} or more. Cash on Delivery adds {money(settings.codCharge)} where available. These charges appear before you prepare an order request.</p>
+        <p>{settings.deliverAllIndia ? 'We deliver across India, to any valid pincode.' : 'Delivery is currently limited to the pincodes in the delivery checker.'} Standard shipping is {money(settings.shippingFee)}, free on orders of {money(settings.freeShippingAbove)} or more. Cash on Delivery adds {money(settings.codCharge)} where available. These charges appear before you prepare an order request.</p>
         <h2>Delivery estimates.</h2>
         <p>The store confirms dispatch and delivery estimates on WhatsApp before accepting the request. There is no automated courier tracking yet.</p>
         <h2>Returns & exchanges.</h2>

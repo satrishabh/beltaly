@@ -41,7 +41,7 @@ Everything is in `src/data/`:
 
 | File | What it holds |
 | --- | --- |
-| `settings.json` | WhatsApp number, UPI ID and payee name, payment link, enabled payment methods, shipping fee, free-shipping threshold, COD charge, serviceable pincodes, announcement bar, GSTIN, Instagram, logo, Cloudinary cloud name |
+| `settings.json` | WhatsApp number, UPI ID and payee name, payment link, enabled payment methods, shipping fee, free-shipping threshold, COD charge, delivery area (`deliverAllIndia: true` accepts any valid Indian pincode; set it to `false` to allow only the `pincodes` list), announcement bar, GSTIN, Instagram, logo, Cloudinary cloud name |
 | `products.json` | Products: `id, slug, name, category, material, colour, width, buckle, price, mrp, sizes, stock, description, care, images, badge, paymentLink` |
 | `categories.json`, `collections.json`, `banners.json` | Categories, the bestsellers collection, the occasion banner |
 | `en.json`, `hi.json`, `ui.json` | English and Hindi strings |

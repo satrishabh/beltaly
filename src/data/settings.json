@@ -10,6 +10,7 @@
   "shippingFee": 79,
   "freeShippingAbove": 1999,
   "codCharge": 49,
+  "deliverAllIndia": true,
   "pincodes": [
     "110001",
     "400001",

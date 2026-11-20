@@ -40,13 +40,15 @@ export function orderId(now = new Date(), random = () => globalThis.crypto.rando
   return `BLT-${date}-${random().replace(/-/g, '').slice(0, 4).toUpperCase()}`;
 }
 
-export const isValidPincode = (pin) => /^\d{6}$/.test(String(pin).trim());
-export const isServiceable = (pin, settings) => settings.pincodes.includes(String(pin).trim());
+// Indian pincodes are 6 digits and never start with 0.
+export const isValidPincode = (pin) => /^[1-9]\d{5}$/.test(String(pin).trim());
+// settings.deliverAllIndia accepts every valid pincode; otherwise only those listed in settings.pincodes.
+export const isServiceable = (pin, settings) => isValidPincode(pin) && (settings.deliverAllIndia === true || settings.pincodes.includes(String(pin).trim()));
 
 export function pincodeMessage(pin, settings) {
   if (!isValidPincode(pin)) return 'Enter a valid 6-digit Indian pincode.';
   return isServiceable(pin, settings)
-    ? 'This pincode is serviceable. The store will confirm dispatch and delivery dates.'
+    ? 'We deliver to this pincode. The store will confirm dispatch and delivery dates.'
     : 'We are not serving this pincode yet. Contact us to ask.';
 }
 

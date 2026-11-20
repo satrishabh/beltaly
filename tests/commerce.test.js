@@ -47,7 +47,7 @@ test('stock is checked across sizes of the same belt', () => {
 });
 
 test('order request rejects an unserviceable pincode and bad phone numbers', () => {
-  assert.throws(() => createOrderRequest([item], { ...customer, pincode: '999999' }, 'whatsapp', products, settings), /delivery area/);
+  assert.throws(() => createOrderRequest([item], { ...customer, pincode: '999999' }, 'whatsapp', products, { ...settings, deliverAllIndia: false }), /delivery area/);
   assert.throws(() => createOrderRequest([item], { ...customer, phone: '12345' }, 'whatsapp', products, settings), /10-digit/);
 });
 
@@ -92,8 +92,17 @@ test('size calculator and pincode checker', () => {
   assert.deepEqual(suggestedSize(33), { inches: 36, cm: 91 });
   assert.equal(suggestedSize(5), null);
   assert.match(pincodeMessage('12', settings), /valid/);
-  assert.match(pincodeMessage('110001', settings), /serviceable/);
-  assert.match(pincodeMessage('999999', settings), /not serving/);
+  assert.match(pincodeMessage('110001', settings), /We deliver/);
+  assert.match(pincodeMessage('012345', settings), /valid/);
+  const listOnly = { ...settings, deliverAllIndia: false };
+  assert.match(pincodeMessage('999999', listOnly), /not serving/);
+  assert.match(pincodeMessage('110001', listOnly), /We deliver/);
+});
+
+test('deliver-all-India accepts any valid pincode', () => {
+  assert.match(pincodeMessage('682001', settings), /We deliver/);
+  assert.ok(createOrderRequest([item], { ...customer, pincode: '682001' }, 'whatsapp', products, settings));
+  assert.throws(() => createOrderRequest([item], { ...customer, pincode: '012345' }, 'whatsapp', products, settings), /6-digit/);
 });
 
 test('search matches multiple words and small typos', () => {
