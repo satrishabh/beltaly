@@ -1196,3 +1196,150 @@ html:not([lang="en"]) .product-meta { letter-spacing: 0; text-transform: none; f
 /* Small finishing touches */
 .pdp-brand { font-size: 11px; letter-spacing: .24em; text-transform: uppercase; }
 @media (max-width: 700px) { .product-card .product-meta { display: none; } }
+
+/* ======================================================================
+   MAISON — PRODUCT PAGE, BAG DRAWER & CHECKOUT
+   ====================================================================== */
+
+/* ---------- Product page ---------- */
+.breadcrumb { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-subtle); }
+html:not([lang="en"]) .breadcrumb { letter-spacing: 0; text-transform: none; font-size: 13px; }
+.breadcrumb a:hover { text-decoration: none; }
+.pdp-page { padding-top: 26px; }
+.detail { gap: 56px; }
+.pdp-info h1 { margin-bottom: 12px; }
+.price-block { padding-block: 18px; border-color: var(--hair); }
+.price-now { font-size: 32px; }
+.price-mrp, .price-block .hint { font-size: 13px; }
+
+/* Perks: one quiet row with hairline dividers instead of four boxes */
+.perks { gap: 0; margin-block: 18px; border-block: 1px solid var(--hair); }
+.perks span { border: 0; border-radius: 0; background: none; padding: 14px 6px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-muted); }
+html:not([lang="en"]) .perks span { letter-spacing: 0; text-transform: none; font-size: 12px; }
+.perks span + span { border-inline-start: 1px solid var(--hair); }
+.perks svg { width: 20px; height: 20px; stroke-width: 1.5; color: var(--gold-text); }
+
+/* Size selector: open, hairline, square chips */
+.size-block { padding: 18px 0 4px; background: none; border: 0; border-radius: 0; }
+.size-block.has-error { padding-inline: 14px; border: 1px solid var(--danger); box-shadow: none; }
+.size-head b { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; }
+html:not([lang="en"]) .size-head b { letter-spacing: 0; text-transform: none; font-size: 14px; }
+.size-chips { gap: 10px; }
+.size-chips button { min-width: 56px; height: 50px; border-color: var(--line-strong); background: transparent; font-size: 15px; font-weight: 600; }
+.size-help summary, .delivery-box label { font-size: 13px; }
+.stock { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-text); }
+html:not([lang="en"]) .stock { letter-spacing: 0; text-transform: none; font-size: 14px; }
+.stock::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-inline-end: 8px; border-radius: 50%; background: var(--good); vertical-align: 1px; }
+
+.delivery-box { padding: 16px 18px; background: transparent; border-color: var(--hair); border-radius: 2px; }
+.inline-form input { border-radius: 2px; }
+
+/* Description, details, care */
+.pdp-section { padding-block: 26px 6px; border-color: var(--hair); }
+.pdp-section h2, .pdp-details summary { font-family: var(--sans); font-size: 12px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-text); }
+html:not([lang="en"]) .pdp-section h2, html:not([lang="en"]) .pdp-details summary { letter-spacing: 0; text-transform: none; font-size: 15px; }
+.pdp-section p { font-size: 15px; line-height: 1.8; }
+.spec-table { background: none; border: 0; border-radius: 0; border-top: 1px solid var(--hair); }
+.spec-table th, .spec-table td { padding: 12px 0; border-color: var(--hair); }
+.spec-table th { width: 40%; background: none; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-subtle) !important; }
+html:not([lang="en"]) .spec-table th { letter-spacing: 0; text-transform: none; font-size: 14px; }
+.pdp-details { padding-block: 18px; border-color: var(--hair); }
+.pdp-details summary { display: flex; justify-content: space-between; align-items: center; list-style: none; }
+.pdp-details summary::-webkit-details-marker { display: none; }
+.pdp-details summary::after { content: "+"; font-family: var(--display); font-size: 24px; font-weight: 500; line-height: 1; color: var(--gold-text); transition: transform .3s var(--ease); }
+.pdp-details[open] summary::after { transform: rotate(45deg); }
+.pdp-details p { line-height: 1.8; }
+
+/* Make it a pair: an espresso feature band */
+.bundle .section-title, .pdp-page .section-title { text-align: center; }
+.bundle .section-title::before, .pdp-page > .section .section-title::before { content: ""; display: block; width: 48px; height: 1px; margin: 0 auto 18px; background: var(--gold); }
+.bundle-box { position: relative; padding: 32px 36px; border: 1px solid var(--hair); border-radius: var(--radius-lg); background: var(--espresso); color: #efe6d6; box-shadow: none; overflow: hidden; }
+.bundle-box::before { content: ""; position: absolute; inset: 0; background: var(--grain); opacity: .06; mix-blend-mode: overlay; pointer-events: none; }
+.bundle-items { position: relative; gap: 28px; }
+.bundle-item { max-width: 220px; color: #b9ad99; }
+.bundle-item img { width: 170px; border: 0; border-radius: var(--radius); background: var(--studio) !important; mix-blend-mode: normal !important; }
+.bundle-item b { color: #f7f1e6; }
+a.bundle-item:hover span { color: var(--gold); text-decoration: none; }
+.bundle-plus { color: var(--gold); }
+.bundle-total { position: relative; }
+.bundle-total p { color: #efe6d6; }
+.bundle-total b { color: #f7f1e6; font-size: 26px; }
+.bundle-total del { color: #8f8370; }
+.bundle-total .hint { color: #b9ad99; }
+.bundle-total .btn--cart { background: var(--gold-metal); border-color: #b88d3a; color: #17110a; }
+
+.pdp-page .products { grid-template-columns: repeat(auto-fit, minmax(240px, 300px)); justify-content: center; gap: 28px; }
+.pdp-page > .section { padding-block: 64px 24px; }
+
+/* ---------- Bag drawer ---------- */
+.drawer-backdrop { background: rgb(10 8 6 / .55); backdrop-filter: blur(3px); }
+.drawer { width: min(440px, 100%); background: var(--bg); border-inline-start: 1px solid var(--hair); }
+.drawer-head { padding: 20px 24px; background: var(--espresso); border-color: var(--hair); }
+.drawer-head h2 { color: #f7f1e6; font-family: var(--display); font-size: 26px; font-weight: 500; }
+.drawer-head .hint { color: #b9ad99; font-family: var(--sans); font-size: 13px; }
+.drawer-head .icon-btn { color: var(--gold); background: transparent; border-color: var(--hair); }
+.free-ship { margin: 16px 24px 0; padding: 12px 14px; background: transparent; border: 1px solid var(--hair); border-radius: 2px; }
+.free-ship svg { color: var(--gold-text); }
+.free-ship-bar { height: 2px; border-radius: 0; }
+.drawer-lines { padding: 0 24px; }
+.drawer .cart-row { grid-template-columns: 84px 1fr; padding: 18px 0; border-color: var(--hair); }
+.drawer-foot { padding: 18px 24px 24px; background: var(--surface); border-color: var(--hair); }
+.drawer-foot .total-row:first-child { font-size: 16px; }
+.drawer-foot .btn--buy { min-height: 54px; }
+.drawer-empty svg { color: var(--gold-text); }
+
+/* ---------- Cart & checkout page ---------- */
+.cart-layout { gap: 40px; }
+.cart-layout > div:first-child { gap: 0; border-top: 1px solid var(--hair); }
+.cart-row.panel { padding: 22px 0; background: none; border: 0; border-bottom: 1px solid var(--hair); border-radius: 0; box-shadow: none; }
+.cart-row { grid-template-columns: 120px 1fr; gap: 22px; }
+.cart-row > a { border-radius: var(--radius); }
+.cart-row img { width: 100%; height: auto; aspect-ratio: 1; padding: 8%; }
+.cart-row h3 { font-family: var(--display); font-size: 1.35rem; font-weight: 600; line-height: 1.15; }
+.drawer .cart-row h3 { font-size: 1.15rem; }
+.line-price b { font-family: var(--sans); }
+.qty { border-color: var(--line-strong); border-radius: 2px; background: transparent; }
+.empty.panel { padding: 64px 20px; background: none; border: 1px solid var(--hair); border-radius: 2px; box-shadow: none; }
+.empty.panel p { font-family: var(--display); font-size: 1.5rem; color: var(--ink); }
+
+/* Price details: an espresso receipt */
+.summary-box { padding: 26px 26px 22px; background: var(--espresso); color: #efe6d6; border: 1px solid var(--hair); border-radius: 2px; box-shadow: 0 30px 60px -30px rgb(18 14 10 / .6); }
+.summary-box h3 { color: var(--gold); border-color: var(--hair); font-size: 11px; letter-spacing: .22em; }
+.summary-box .total-row { color: #d8cdb9; font-size: 14px; }
+.summary-box .good, .summary-box .savings { color: #e3c47d !important; }
+.summary-box hr { border-top: 1px solid var(--hair); margin: 12px 0; }
+.summary-box .total-row--grand b { color: #f7f1e6; font-family: var(--display); font-size: 28px; font-weight: 600; }
+.summary-box .total-row--grand b:first-child { font-family: var(--sans); font-size: 13px; letter-spacing: .18em; text-transform: uppercase; align-self: center; color: #d8cdb9; }
+.summary-box .hint { color: #8f8370; }
+.secure-note { margin: 16px 2px; font-size: 12.5px; }
+.secure-note svg { color: var(--gold-text); }
+
+/* Address form: tracked labels, hairline fields, payment choices as selectable cards */
+.checkout.panel { margin-top: 0; padding: 26px; background: var(--surface); border: 1px solid var(--hair); border-radius: 2px; box-shadow: none; }
+.checkout h3 { font-family: var(--display); font-size: 1.6rem; font-weight: 600; }
+.form-grid label { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-subtle); }
+html:not([lang="en"]) .form-grid label { letter-spacing: 0; text-transform: none; font-size: 13px; }
+.checkout input:not([type="checkbox"]):not([type="radio"]), .checkout textarea { padding: 12px 14px; border-radius: 2px; background: var(--bg); border-color: var(--line); font-size: 15px; text-transform: none; letter-spacing: 0; }
+.checkout input:focus, .checkout textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgb(201 161 74 / .18); }
+input[type="radio"], input[type="checkbox"] { accent-color: #a97d2c; }
+.checkout fieldset { gap: 10px; padding: 0; border: 0; }
+.checkout legend { margin-bottom: 10px; padding: 0; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-subtle); }
+html:not([lang="en"]) .checkout legend { letter-spacing: 0; text-transform: none; font-size: 13px; }
+.checkout fieldset label { padding: 14px 16px; border: 1px solid var(--line); border-radius: 2px; cursor: pointer; transition: border-color .2s, background .2s; }
+.checkout fieldset label:hover { border-color: var(--gold); }
+.checkout fieldset label:has(input:checked) { border-color: var(--gold); background: rgb(201 161 74 / .08); box-shadow: inset 3px 0 0 var(--gold); }
+.checkout .btn--buy, .order-result .btn--buy { min-height: 54px; background: var(--gold-metal); border-color: #b88d3a; color: #17110a; }
+.order-result { border: 1px solid var(--gold); border-radius: 2px; }
+.order-result .hint svg { color: var(--gold-text); }
+
+@media (max-width: 700px) {
+  .detail { gap: 18px; }
+  .perks span { padding: 12px 2px; font-size: 9.5px; letter-spacing: .04em; }
+  .bundle-box { padding: 22px 18px; }
+  .bundle-items { gap: 10px; }
+  .bundle-item img { width: 120px; }
+  .cart-row { grid-template-columns: 92px 1fr; gap: 14px; }
+  .cart-row h3 { font-size: 1.15rem; }
+  .checkout.panel, .summary-box { padding: 20px; }
+  .pdp-page .products { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+}

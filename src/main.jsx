@@ -4,7 +4,7 @@ import { ArrowUpRight, Check, ChevronDown, Globe, Heart, Home as HomeIcon, Layou
 import ErrorBoundary from './ErrorBoundary.jsx';
 import { categories, discountPercent, getProduct, imageUrl, money, products, settings } from './catalog.js';
 import { totals, validateItems, whatsappUrl } from './commerce.js';
-import { LANGUAGES, LanguageContext, detectLanguage, directionOf, format, isLanguage, loadDictionary, loadFont } from './i18n.js';
+import { LANGUAGES, LanguageContext, detectLanguage, directionOf, isLanguage, loadDictionary, loadFont, makeT } from './i18n.js';
 import { STORAGE_KEYS, clampQuantity, readCart, readLanguage, readOrders, readSaved, readTheme, writeJson } from './storage.js';
 import Account, { ACCOUNT_TITLES } from './views/Account.jsx';
 import Checkout from './views/Checkout.jsx';
@@ -52,7 +52,7 @@ function App() {
   const [toast, setToast] = useState('');
   const [clicked, setClicked] = useState(false);
   const lastPath = useRef(window.location.pathname);
-  const t = (key, vars) => format(dict, key, vars);
+  const t = makeT(dict);
 
   const resolved = resolveRoute(route);
   const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);

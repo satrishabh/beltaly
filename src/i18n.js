@@ -58,7 +58,11 @@ export const LanguageContext = createContext({ code: 'en', dict: {} });
 
 // t('Add to bag'), t('Only {count} left', { count: 3 }), t.rich('Starting at {price}', { price }) → values in <b>.
 export function useT() {
-  const { dict } = useContext(LanguageContext);
+  return makeT(useContext(LanguageContext).dict);
+}
+
+// Same translator outside the context provider (the App shell builds the provider, so it can't use useT).
+export function makeT(dict) {
   const t = (key, vars) => format(dict, key, vars);
   t.rich = (key, vars) => {
     const text = (dict && dict[key]) || key;
