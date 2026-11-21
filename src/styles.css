@@ -1684,3 +1684,39 @@ html:not([lang="en"]) .menu-label { letter-spacing: 0; text-transform: none; fon
 :root[data-theme="dark"] .checkout input:not([type="checkbox"]):not([type="radio"]), :root[data-theme="dark"] .checkout textarea { background: var(--bg); border-color: var(--line-strong); color: var(--ink); }
 :root[data-theme="dark"] .checkout input::placeholder, :root[data-theme="dark"] .checkout textarea::placeholder { color: #7d7363; }
 :root[data-theme="dark"] .phone-field > span { background: var(--surface-2); }
+
+/* ======================================================================
+   MAISON — EDITORIAL CATEGORY TILES, FOOTER MARKETPLACES
+   ====================================================================== */
+.lux-categories { grid-template-columns: 1.25fr 1fr; grid-template-rows: repeat(2, minmax(240px, 300px)); gap: 18px; }
+.lux-category { position: relative; display: block; overflow: hidden; border-radius: 2px; isolation: isolate; }
+.lux-category:first-child { grid-row: span 2; }
+.lux-category:only-child, .lux-category:first-child:nth-last-child(2) { grid-row: auto; }
+.lux-category-img { position: absolute; inset: 0; aspect-ratio: auto; border-radius: 0; }
+.lux-category-img img { inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--focus); transform: scale(1.35); transform-origin: var(--focus); transition: transform 1.2s var(--ease); }
+.lux-category:hover .lux-category-img img { transform: scale(1.45); }
+.lux-category::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgb(14 10 6 / .92) 0%, rgb(14 10 6 / .55) 34%, rgb(14 10 6 / 0) 64%); pointer-events: none; }
+.lux-category::before { content: ""; position: absolute; inset: 12px; z-index: 2; border: 1px solid rgb(201 161 74 / .35); pointer-events: none; transition: inset .5s var(--ease), border-color .5s; }
+.lux-category:hover::before { inset: 8px; border-color: rgb(201 161 74 / .7); }
+.lux-category-text { position: absolute; inset-inline: 0; bottom: 0; z-index: 3; padding: 26px 30px 28px; color: #f7f1e6; }
+.lux-category-text b { color: #f7f1e6; font-size: 2rem; }
+.lux-category:first-child .lux-category-text b { font-size: clamp(2.2rem, 3.4vw, 3rem); }
+.lux-category-text small { color: #d8cdb9; font-size: 14px; }
+.lux-category-text i { color: var(--gold); }
+
+/* Footer: label on its own line, chips in one row */
+.marketplaces--dark > span { flex-basis: 100%; margin-bottom: 2px; }
+
+@media (max-width: 700px) {
+  .lux-categories { grid-template-columns: 1fr 1fr; grid-template-rows: none; gap: 10px; }
+  .lux-category { aspect-ratio: 4 / 5; }
+  .lux-category:first-child { grid-row: auto; grid-column: span 2; aspect-ratio: 16 / 11; }
+  .lux-category::before { inset: 8px; }
+  .lux-category-text { padding: 16px 16px 18px; }
+  .lux-category-text b { font-size: 1.35rem; }
+  .lux-category:first-child .lux-category-text b { font-size: 1.9rem; }
+  .lux-category-text small { display: none; }
+  .lux-category:first-child .lux-category-text small { display: block; font-size: 13px; }
+  .lux-category-text i { font-size: 10.5px; }
+}
+@media (max-width: 700px) { .lux-category-text i { display: none; } }

@@ -9,6 +9,8 @@ import { Link, Marketplaces, ProductGrid, href, productHref } from './shared.jsx
 const lowestPrice = Math.min(...products.map((product) => product.price));
 const bestOff = Math.max(...products.map(discountPercent));
 const looks = (lookbook.items ?? []).filter((item) => item?.image);
+// Where each category tile's close-up crop is centred (the buckle, the stitching, the box).
+const CATEGORY_FOCUS = { formal: '18% 50%', casual: '24% 40%', gifts: '42% 55%' };
 
 // Line illustrations for the craft section (drawn in currentColor, so they follow the theme).
 const BuckleArt = () => (
@@ -103,8 +105,8 @@ export default function Home({ saved, onToggleSaved }) {
             {categories.map((category) => {
               const sample = products.find((product) => product.category === category.id);
               return (
-                <a className="lux-category" key={category.id} href={href('shop', { category: category.id })}>
-                  <span className="lux-category-img studio"><img src={imageUrl(sample.images[0])} alt="" width="600" height="600" loading="lazy" /></span>
+                <a className="lux-category" key={category.id} href={href('shop', { category: category.id })} style={{ '--focus': CATEGORY_FOCUS[category.id] ?? '50% 50%' }}>
+                  <span className="lux-category-img studio"><img src={imageUrl(sample.images.at(-1))} alt="" width="600" height="600" loading="lazy" /></span>
                   <span className="lux-category-text"><b>{t(category.name)}</b><small>{t(category.description)}</small><i>{t('Explore')} <ArrowRight size={14} /></i></span>
                 </a>
               );
