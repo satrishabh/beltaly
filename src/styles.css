@@ -1844,3 +1844,35 @@ html:not([lang="en"]) .price-off { letter-spacing: 0 !important; text-transform:
   .bundle-items { flex: none; }
   .bundle-total { padding: 22px 0 0; border-inline-start: 0; border-top: 1px solid var(--hair); text-align: center; max-width: 420px; justify-self: center; width: 100%; }
 }
+
+/* ======================================================================
+   MAISON — DELIVERY CHECK, BUNDLE TOTAL, PHONE SIZE GRID
+   ====================================================================== */
+
+/* Delivery: a kicker label and one joined field (input + Check) on a hairline, no boxed card */
+.delivery-box { margin-block: 22px 8px; padding: 0; border: 0; background: none; }
+.delivery-box label { gap: 8px; color: var(--gold-text); font-size: 11.5px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+html:not([lang="en"]) .delivery-box label { letter-spacing: 0; text-transform: none; font-size: 13px; }
+.delivery-box .inline-form { gap: 0; margin: 12px 0 10px; border: 1px solid var(--line-strong); border-radius: 2px; background: var(--surface); transition: border-color .2s, box-shadow .2s; }
+.delivery-box .inline-form:focus-within { border-color: var(--gold); box-shadow: 0 0 0 3px rgb(201 161 74 / .14); }
+.delivery-box .inline-form input { min-height: 50px; padding: 0 16px; border: 0; background: none; font-size: 16px; letter-spacing: .08em; box-shadow: none; outline: none; }
+.delivery-box .inline-form input::placeholder { letter-spacing: 0; }
+.delivery-box .inline-form button { align-self: stretch; padding: 0 22px; border-inline-start: 1px solid var(--line-strong); border-radius: 0; color: var(--ink); font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; text-decoration: none; transition: background .2s, color .2s; }
+html:not([lang="en"]) .delivery-box .inline-form button { letter-spacing: 0; text-transform: none; font-size: 14px; }
+.delivery-box .inline-form button:hover { background: var(--espresso); color: #e3c47d; }
+.delivery-box .hint { font-size: 13px; }
+
+/* Bundle total: the same serif price voice as the product price */
+.bundle-total > p:first-child { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: inherit; gap: 4px 12px; margin: 0 0 6px; color: #b9ad99; font-size: 11.5px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+html:not([lang="en"]) .bundle-total > p:first-child { letter-spacing: 0; text-transform: none; font-size: 13px; }
+.bundle-total > p:first-child b { flex-basis: 100%; order: 2; font-family: var(--display); font-size: clamp(2.4rem, 3.2vw, 2.8rem); font-weight: 600; letter-spacing: 0; line-height: 1.05; color: #f7f1e6; }
+.bundle-total > p:first-child del { order: 3; color: #8d8270; font-size: 14px; letter-spacing: 0; text-transform: none; font-weight: 500; }
+.bundle-total .hint { margin: 4px 0 18px; color: #b9ad99; }
+.bundle-total .btn { width: 100%; min-height: 52px; }
+
+/* Phones: sizes fill the row as a 5-column grid instead of a ragged wrap */
+@media (max-width: 700px) {
+  .size-chips { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+  .size-chips button { min-width: 0; width: 100%; height: 48px; }
+  .bundle-total > p:first-child { justify-content: center; }
+}
