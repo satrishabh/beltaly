@@ -1837,3 +1837,10 @@ html:not([lang="en"]) .marketplaces--home, html:not([lang="en"]) .marketplaces--
 .price-off { margin: 0; padding: 4px 10px; border: 1px solid var(--hair); font-size: 11.5px !important; font-weight: 700; letter-spacing: .16em !important; text-transform: uppercase; }
 html:not([lang="en"]) .price-off { letter-spacing: 0 !important; text-transform: none; font-size: 13px !important; }
 .price-block .hint { margin-top: 10px; font-size: 12.5px; }
+
+/* Tablets: "Make it a pair" stacks like on phones (no stray divider line) */
+@media (min-width: 701px) and (max-width: 1000px) {
+  .bundle-box { display: grid; gap: 26px; }
+  .bundle-items { flex: none; }
+  .bundle-total { padding: 22px 0 0; border-inline-start: 0; border-top: 1px solid var(--hair); text-align: center; max-width: 420px; justify-self: center; width: 100%; }
+}
