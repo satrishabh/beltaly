@@ -14,7 +14,7 @@ import MenuSheet from './views/MenuSheet.jsx';
 import ProductPage from './views/ProductPage.jsx';
 import SearchBox from './views/SearchBox.jsx';
 import Shop from './views/Shop.jsx';
-import { Link, Marketplaces, href, navigate, parseRoute, productHref } from './views/shared.jsx';
+import { Link, Marketplaces, PageHero, href, navigate, parseRoute, productHref } from './views/shared.jsx';
 import './styles.css';
 
 const sameLine = (a, b) => a.productId === b.productId && a.size === b.size;
@@ -266,7 +266,7 @@ function App() {
   else if (resolved.view === 'cart') screen = <Checkout cartItems={cartItems} onUpdateQuantity={updateQuantity} onRemove={removeLine} onOrderSent={orderSent} />;
   else if (resolved.view === 'info') screen = <InfoPage page={resolved.page} />;
   else if (resolved.view === 'account') screen = <Account page={resolved.page} orders={orders} saved={saved} onToggleSaved={toggleSaved} onBuyAgain={buyAgain} />;
-  else screen = <div className="wrap prose"><h1>{t('This page slipped a notch.')}</h1><p>{t('The link may be old, or the belt may have moved.')}</p><Link className="btn" to="shop">{t('Explore the collection')} <ArrowUpRight size={15} /></Link></div>;
+  else screen = <div className="not-found"><PageHero kicker="404" title={t('This page slipped a notch.')} lead={t('The link may be old, or the belt may have moved.')}><Link className="btn btn--buy" to="shop">{t('Explore the collection')} <ArrowUpRight size={15} /></Link></PageHero></div>;
 
   return (
     <LanguageContext.Provider value={{ code: language, dict }}>

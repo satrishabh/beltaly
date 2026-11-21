@@ -3,7 +3,7 @@ import { ArrowUpRight, Check, MessageCircle } from 'lucide-react';
 import { getProduct, imageUrl, money, settings } from '../catalog.js';
 import { PAYMENT_METHODS, whatsappUrl } from '../commerce.js';
 import { useLanguage, useT } from '../i18n.js';
-import { Link, ProductGrid, productHref } from './shared.jsx';
+import { Link, PageHero, ProductGrid, productHref } from './shared.jsx';
 
 // No sign-in: orders and the wishlist are kept in this browser. "account" is kept so old links still open.
 export const ACCOUNT_TITLES = {
@@ -57,8 +57,9 @@ export default function Account({ page, orders, saved, onToggleSaved, onBuyAgain
   const view = page === 'account' ? 'orders' : page;
 
   return (
+    <div className="account-page">
+    <PageHero crumb={t(ACCOUNT_TITLES[view])} kicker="Beltaly" title={t(ACCOUNT_TITLES[view])} />
     <div className="wrap section">
-      <h1 className="page-title">{t(ACCOUNT_TITLES[view])}</h1>
       <nav className="account-tabs" aria-label="Beltaly">
         {[['orders', t('My orders')], ['saved', `${t('Wishlist')} (${saved.length})`], ['business', t('Bulk orders')]].map(([key, label]) => <Link key={key} to={key} aria-current={view === key ? 'page' : undefined}>{label}</Link>)}
       </nav>
@@ -86,6 +87,7 @@ export default function Account({ page, orders, saved, onToggleSaved, onBuyAgain
         : <ProductGrid items={savedProducts} saved={saved} onToggleSaved={onToggleSaved} className="shop-products" />)}
 
       {view === 'business' && <BusinessForm />}
+    </div>
     </div>
   );
 }

@@ -90,3 +90,19 @@ export function ProductCard({ product, saved, onToggleSaved }) {
 export function ProductGrid({ items, saved, onToggleSaved, className = '' }) {
   return <div className={`products ${className}`}>{items.map((product) => <ProductCard key={product.id} product={product} saved={saved.includes(product.id)} onToggleSaved={onToggleSaved} />)}</div>;
 }
+
+// Espresso editorial band used at the top of the shop, info and account pages.
+export function PageHero({ crumb, kicker, title, lead, children }) {
+  const t = useT();
+  return (
+    <header className="page-head page-hero">
+      <div className="wrap page-hero-inner">
+        {crumb && <nav className="breadcrumb" aria-label={t('Breadcrumb')}><a href={href('')}>{t('Home')}</a> › <span>{crumb}</span></nav>}
+        {kicker && <p className="lux-kicker">{kicker}</p>}
+        <h1>{title}</h1>
+        {lead && <p className="page-hero-lead">{lead}</p>}
+        {children}
+      </div>
+    </header>
+  );
+}

@@ -3,7 +3,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { money, settings } from '../catalog.js';
 import { suggestedSize, whatsappUrl } from '../commerce.js';
 import { useT } from '../i18n.js';
-import { Link } from './shared.jsx';
+import { Link, PageHero } from './shared.jsx';
 import pages from '../data/pages.json' with { type: 'json' };
 
 // Page titles, headings and search descriptions live in src/data/pages.json (also read by scripts/prerender.mjs).
@@ -62,9 +62,9 @@ export default function InfoPage({ page }) {
   const t = useT();
   const contactHref = settings.whatsapp ? whatsappUrl(settings.whatsapp) : null;
   return (
+    <div className={`info-page info-page--${page}`}>
+    <PageHero crumb={t(INFO_PAGES[page].title)} kicker="Beltaly" title={t(INFO_PAGES[page].heading)} />
     <article className="wrap prose">
-      <nav className="breadcrumb" aria-label={t('Breadcrumb')}><Link to="">{t('Home')}</Link> › <span>{t(INFO_PAGES[page].title)}</span></nav>
-      <h1>{t(INFO_PAGES[page].heading)}</h1>
 
       {page === 'size-guide' && <>
         <p>{t('The best guide is a belt you already love. Measure from the buckle pin to the hole you use most. That measurement is your belt size, not the total length of the strap.')}</p>
@@ -131,5 +131,6 @@ export default function InfoPage({ page }) {
         <StoreDetails />
       </>}
     </article>
+    </div>
   );
 }

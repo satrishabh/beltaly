@@ -31,12 +31,12 @@ export default function Shop({ query, saved, onToggleSaved }) {
 
   return (
     <div className="shop-page">
-      <header className="page-head shop-hero">
-        <div className="wrap shop-hero-inner">
+      <header className="page-head page-hero">
+        <div className="wrap page-hero-inner">
           <nav className="breadcrumb" aria-label={t('Breadcrumb')}><a href={href('')}>{t('Home')}</a> › <span>{categoryName ? t(categoryName) : t('Belts')}</span></nav>
           <p className="lux-kicker">{t('Genuine leather belts')}</p>
           <h1>{filters.q ? t('Results for “{query}”', { query: filters.q }) : categoryName ? t(categoryName) : t('All belts')}</h1>
-          {currentCategory?.description && !filters.q && <p className="shop-hero-lead">{t(currentCategory.description)}</p>}
+          {currentCategory?.description && !filters.q && <p className="page-hero-lead">{t(currentCategory.description)}</p>}
         </div>
       </header>
       <div className="wrap">
