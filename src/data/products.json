@@ -14,6 +14,7 @@
     "description": "A genuine leather belt for formal and casual wear. Smooth black leather, an adjustable hole fit and a brushed metal plate buckle that sits clean under a tucked shirt.",
     "care": "Wipe with a soft dry cloth. Keep away from water and direct heat. Store flat or loosely rolled. Condition occasionally with a leather cream.",
     "images": ["/products/plate-buckle-black.webp"],
+    "details": [{ "focus": "28% 45%", "zoom": 2.3 }],
     "badge": "BESTSELLER",
     "rating": 5,
     "amazon": "https://www.amazon.in/dp/B0H33T26D6",
@@ -34,6 +35,7 @@
     "description": "The same genuine leather plate buckle belt in a warm tan, embossed with the Beltaly horse. Made for chinos, denim and smart-casual days. Arrives in a Beltaly gift box.",
     "care": "Wipe with a soft dry cloth. Keep away from water and direct heat. Store flat or loosely rolled. Condition occasionally with a leather cream.",
     "images": ["/products/plate-buckle-tan.webp"],
+    "details": [{ "focus": "28% 34%", "zoom": 2.2 }, { "focus": "79% 43%", "zoom": 2.8 }, { "focus": "48% 58%", "zoom": 2.0 }],
     "badge": "NEW",
     "amazon": "https://www.amazon.in/dp/B0H337JQQW",
     "paymentLink": ""
@@ -53,6 +55,7 @@
     "description": "Two genuine leather belts in one pack: textured black and textured brown, each with a brushed pin buckle. One for the office, one for the weekend. A ready-made gift.",
     "care": "Wipe with a soft dry cloth. Keep away from water and direct heat. Store flat or loosely rolled. Condition occasionally with a leather cream.",
     "images": ["/products/combo-black-brown.webp", "/products/combo-black-boxed.webp"],
+    "details": [{ "focus": "52% 72%", "zoom": 2.0 }, { "focus": "60% 24%", "zoom": 2.6 }],
     "badge": "COMBO PACK",
     "rating": 5,
     "amazon": "https://www.amazon.in/dp/B0H334SK63",

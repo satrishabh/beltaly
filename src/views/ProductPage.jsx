@@ -18,6 +18,15 @@ export default function ProductPage({ product, saved, onToggleSaved, onAddToCart
   const sizeBlock = useRef(null);
   const isSaved = saved.includes(product.id);
   const off = discountPercent(product);
+  // Full photos first, then close-ups cut from them (products.json "details": focus point + zoom).
+  const views = [
+    ...product.images.map((path) => ({ path })),
+    ...(product.details ?? []).map((detail) => ({ path: product.images[detail.image ?? 0], focus: detail.focus, zoom: detail.zoom })),
+  ];
+  const view = views[image] ?? views[0];
+  const crop = (item) => (item.zoom ? { transformOrigin: item.focus, transform: `scale(${item.zoom})` } : undefined);
+  const swipe = useRef(null);
+  const step = (delta) => setImage((index) => (index + delta + views.length) % views.length);
   const category = getCategory(product.category);
   const related = products.filter((item) => item.id !== product.id).slice(0, 4);
   const suggestion = suggestedSize(waist);
@@ -78,22 +87,22 @@ export default function ProductPage({ product, saved, onToggleSaved, onAddToCart
       <nav className="breadcrumb" aria-label={t('Breadcrumb')}><Link to="">{t('Home')}</Link> › <Link to="shop">{t('Belts')}</Link> › <Link to="shop" params={{ category: product.category }}>{t(category?.name ?? '')}</Link> › <span>{t(product.name)}</span></nav>
       <div className="detail">
         <div className="gallery">
-          {product.images.length > 1 && (
+          {views.length > 1 && (
             <div className="gallery-thumbs">
-              {product.images.map((path, index) => (
-                <button key={path} className={index === image ? 'is-selected' : ''} aria-pressed={index === image} aria-label={t('View image {number}', { number: index + 1 })} onMouseEnter={() => setImage(index)} onClick={() => setImage(index)}>
-                  <img src={imageUrl(path)} alt="" width="80" height="80" />
+              {views.map((item, index) => (
+                <button key={`${item.path}-${item.focus ?? 'full'}`} className={index === image ? 'is-selected' : ''} aria-pressed={index === image} aria-label={t('View image {number}', { number: index + 1 })} onMouseEnter={() => setImage(index)} onClick={() => setImage(index)}>
+                  <img src={imageUrl(item.path)} alt="" width="80" height="80" style={crop(item)} />
                 </button>
               ))}
             </div>
           )}
-          <div className="gallery-main">
+          <div className="gallery-main" onTouchStart={(event) => { swipe.current = event.touches[0].clientX; }} onTouchEnd={(event) => { const dx = event.changedTouches[0].clientX - (swipe.current ?? event.changedTouches[0].clientX); swipe.current = null; if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1); }}>
             <button className="zoom-button" onClick={() => zoom.current?.showModal()} aria-label={t('Zoom product image')}>
-              <img className="main-image" src={imageUrl(product.images[image])} alt={t(product.name)} width="900" height="900" fetchpriority="high" />
+              <img key={image} className="main-image" src={imageUrl(view.path)} alt={t(product.name)} width="900" height="900" fetchpriority="high" style={crop(view)} />
               <span className="zoom-hint"><ZoomIn size={16} /></span>
             </button>
             <button className={`save-toggle save-toggle--float ${isSaved ? 'is-saved' : ''}`} aria-pressed={isSaved} aria-label={t(isSaved ? 'Remove from wishlist' : 'Add to wishlist')} onClick={() => onToggleSaved(product.id)}><Heart size={18} fill={isSaved ? 'currentColor' : 'none'} /></button>
-            {product.images.length > 1 && <div className="gallery-dots" aria-hidden="true">{product.images.map((path, index) => <span key={path} className={index === image ? 'on' : ''} />)}</div>}
+            {views.length > 1 && <div className="gallery-dots" aria-hidden="true">{views.map((item, index) => <span key={`${item.path}-${item.focus ?? 'full'}`} className={index === image ? 'on' : ''} />)}</div>}
           </div>
           <div className="buy-buttons buy-buttons--desktop">
             <button className="btn btn--cart" disabled={!product.stock} onClick={() => buy(false)}><ShoppingBag size={17} /> {t('Add to bag')}</button>
@@ -199,7 +208,7 @@ export default function ProductPage({ product, saved, onToggleSaved, onAddToCart
 
       <dialog ref={zoom} className="zoom-dialog" onClick={(event) => event.target === zoom.current && zoom.current.close()}>
         <form method="dialog"><button className="icon-btn zoom-close" aria-label={t('Close')}><X size={20} /></button></form>
-        <img src={imageUrl(product.images[image])} alt={t(product.name)} width="900" height="900" />
+        <span className="zoom-frame"><img src={imageUrl(view.path)} alt={t(product.name)} width="900" height="900" style={crop(view)} /></span>
       </dialog>
     </div>
   );
