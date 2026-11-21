@@ -78,7 +78,10 @@ export default function Shop({ query, saved, onToggleSaved }) {
 
       {results.length > 0
         ? <ProductGrid items={results} saved={saved} onToggleSaved={onToggleSaved} className="shop-products" />
-        : <div className="empty panel"><p>{t('No belts match those filters. Try a different combination.')}</p><button className="btn secondary" onClick={clear}>{t('Clear filters')}</button></div>}
+        : <>
+          <div className="empty panel"><p>{t('No belts match those filters. Try a different combination.')}</p><button className="btn secondary" onClick={clear}>{t('Clear filters')}</button></div>
+          <section className="section shop-suggest"><h2 className="section-title">{t('You may also like')}</h2><ProductGrid items={[...products].sort(sorters.featured).slice(0, 4)} saved={saved} onToggleSaved={onToggleSaved} className="shop-products" /></section>
+        </>}
       </div>
     </div>
   );
