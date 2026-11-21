@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowUpRight, Minus, Plus, ShieldCheck, ShoppingBag } from 'lucide-react';
+import { ArrowUpRight, Check, Minus, Plus, ShieldCheck, ShoppingBag } from 'lucide-react';
 import { prepareOrder } from '../api.js';
 import { discountPercent, getProduct, imageUrl, money, products, settings } from '../catalog.js';
 import { PAYMENT_METHODS, orderSummary, paymentLinkFor, totals, upiUrl, whatsappUrl } from '../commerce.js';
@@ -63,6 +63,14 @@ export default function Checkout({ cartItems, onUpdateQuantity, onRemove, onOrde
   return (
     <div className="wrap section">
       <h1 className="page-title">{order ? t('Send your order') : `${t('Bag')} (${itemsLabel})`}</h1>
+      {(cartItems.length > 0 || order) && (
+        <ol className="checkout-steps">
+          {[t('Bag'), t('Delivery address'), t('Send your order')].map((label, index) => {
+            const current = order ? 2 : 1;
+            return <li key={label} className={index < current ? 'is-done' : index === current ? 'is-current' : ''} aria-current={index === current ? 'step' : undefined}><span>{index < current ? <Check size={13} strokeWidth={3} /> : index + 1}</span>{label}</li>;
+          })}
+        </ol>
+      )}
       <div className="cart-layout">
         <div className="cart-items" aria-live="polite">
           {cartItems.length === 0 && !order && <div className="empty panel"><ShoppingBag size={34} /><p>{t('Your bag is waiting for a good fit.')}</p><Link className="btn" to="shop">{t('Explore the collection')} <ArrowUpRight size={15} /></Link></div>}
