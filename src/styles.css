@@ -1774,3 +1774,54 @@ html:not([lang="en"]) .suggest-all { letter-spacing: 0; text-transform: none; fo
 .zoom-dialog img { mix-blend-mode: multiply; }
 @media (prefers-reduced-motion: reduce) { .main-image { animation: none; } }
 .gallery-main { touch-action: pan-y pinch-zoom; overscroll-behavior-x: contain; }
+
+/* ======================================================================
+   MAISON — GIFT EDIT, SIZE BAND, MARKETPLACE LINE
+   ====================================================================== */
+
+/* Gift: no box; the photo sits on a gold frame offset behind it */
+.lux-gift { isolation: isolate; gap: 72px; margin-block: 96px 40px; padding: 0; background: none; border: 0; border-radius: 0; }
+.lux-gift-img { border-radius: 2px; overflow: visible; isolation: auto; }
+.lux-gift-img::before { content: ""; position: absolute; inset: 22px -22px -22px 22px; z-index: -1; border: 1px solid var(--gold); transition: inset .6s var(--ease); }
+[dir="rtl"] .lux-gift-img::before { inset: 22px 22px -22px -22px; }
+.lux-gift:hover .lux-gift-img::before { inset: 14px -14px -14px 14px; }
+.lux-gift-img > img { border-radius: 2px; }
+.lux-gift-img.studio { background-clip: padding-box; }
+.lux-gift-copy { max-width: 470px; }
+.lux-gift h2 { margin: 6px 0 18px; font-size: clamp(2.4rem, 4.2vw, 3.6rem); }
+.lux-gift-copy > p:not(.lux-kicker):not(.offer-price) { font-size: 16px; line-height: 1.8; color: var(--ink-muted); }
+.lux-gift .offer-price { display: flex; align-items: baseline; gap: 12px; margin: 26px 0 28px; padding-block: 16px; border-block: 1px solid var(--hair); }
+.lux-gift .offer-price b { font-family: var(--display); font-size: 2.4rem; font-weight: 600; line-height: 1; }
+.lux-gift .btn { min-height: 52px; padding-inline: 28px; }
+
+/* Size band: hairlines with a gold ruler edge */
+.lux-fit { position: relative; margin-top: 64px; padding: 34px 6px 40px; background: none !important; border: 0; border-top: 1px solid var(--hair); border-radius: 0; }
+.lux-fit::after { content: ""; position: absolute; inset-inline: 0; bottom: 0; height: 12px; background:
+  repeating-linear-gradient(90deg, var(--gold) 0 1px, transparent 1px 60px) bottom / 100% 12px no-repeat,
+  repeating-linear-gradient(90deg, rgb(201 161 74 / .55) 0 1px, transparent 1px 12px) bottom / 100% 6px no-repeat;
+  border-bottom: 1px solid var(--gold); opacity: .8; }
+.lux-fit h2 { font-size: clamp(1.8rem, 2.8vw, 2.4rem); font-weight: 500; }
+.lux-fit p { color: var(--ink-muted); }
+.lux-fit .btn { min-height: 48px; padding-inline: 24px; border-color: var(--gold); color: var(--ink); }
+.lux-fit .btn:hover { background: var(--espresso); border-color: var(--espresso); color: #f7f1e6; }
+
+/* Marketplace line under the ribbon: quiet text links with hairline dividers */
+.marketplaces--home { gap: 0; margin: 0; padding-block: 18px; border-bottom: 1px solid var(--hair); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; }
+.marketplaces--home > span { margin-inline-end: 18px; font-weight: 600; color: var(--ink-subtle); }
+.marketplaces--home a { padding: 2px 18px; border: 0; border-radius: 0; background: none; font-size: 11.5px; font-weight: 700; letter-spacing: .18em; color: var(--ink); }
+.marketplaces--home a + a { border-inline-start: 1px solid var(--hair); }
+.marketplaces--home a:hover { color: var(--gold-text); }
+html:not([lang="en"]) .marketplaces--home, html:not([lang="en"]) .marketplaces--home a { letter-spacing: 0; text-transform: none; font-size: 13px; }
+
+@media (max-width: 700px) {
+  .lux-gift { gap: 40px; margin-block: 64px 24px; padding-inline: 0; }
+  .lux-gift-img { margin-inline-end: 16px; }
+  .lux-gift-img::before { inset: 14px -14px -14px 14px; }
+  .lux-gift h2 { font-size: 2.3rem; }
+  .lux-gift .offer-price b { font-size: 2rem; }
+  .lux-gift .btn { width: 100%; }
+  .lux-fit { padding: 28px 0 36px; gap: 14px; text-align: left; }
+  .marketplaces--home { justify-content: center; padding-block: 14px; }
+  .marketplaces--home > span { flex-basis: 100%; margin: 0 0 6px; text-align: center; }
+  .marketplaces--home a { padding-inline: 14px; }
+}
