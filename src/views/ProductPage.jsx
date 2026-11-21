@@ -176,9 +176,9 @@ export default function ProductPage({ product, saved, onToggleSaved, onAddToCart
           <h2 className="section-title">{t('Make it a pair')}</h2>
           <div className="bundle-box panel">
             <div className="bundle-items">
-              <div className="bundle-item"><img src={imageUrl(product.images[0])} alt="" width="140" height="140" /><span>{t('This item: {name}', { name: t(product.name) })}</span><b>{money(product.price)}</b></div>
+              <div className="bundle-item"><span className="bundle-thumb studio"><img src={imageUrl(product.images[0])} alt="" width="140" height="140" /></span><span>{t('This item: {name}', { name: t(product.name) })}</span><b>{money(product.price)}</b></div>
               <Plus size={22} className="bundle-plus" aria-hidden="true" />
-              <a className="bundle-item" href={productHref(partner)}><img src={imageUrl(partner.images[0])} alt="" width="140" height="140" /><span>{t(partner.name)}</span><b>{money(partner.price)}</b></a>
+              <a className="bundle-item" href={productHref(partner)}><span className="bundle-thumb studio"><img src={imageUrl(partner.images[0])} alt="" width="140" height="140" /></span><span>{t(partner.name)}</span><b>{money(partner.price)}</b></a>
             </div>
             <div className="bundle-total">
               <p>{t('Both belts:')} <b>{money(product.price + partner.price)}</b> <del>{money(product.mrp + partner.mrp)}</del></p>

@@ -182,6 +182,7 @@ export default function Home({ saved, onToggleSaved }) {
         </section>
 
         <section className="section lux-promise" data-reveal>
+          <picture><source srcSet={imageUrl('/brand/mark-3d.webp')} type="image/webp" /><img className="lux-sign-mark" src={imageUrl('/brand/mark-3d.png')} alt="" width="192" height="182" loading="lazy" /></picture>
           <h2 className="lux-sign">{t(settings.tagline)}</h2>
         </section>
       </div>

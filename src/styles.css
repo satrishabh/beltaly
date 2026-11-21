@@ -1496,3 +1496,63 @@ html:not([lang="en"]) .account-page .stack-form label { letter-spacing: 0; text-
 .account-page .stack-form .btn--whatsapp svg, .info-page .btn--whatsapp svg { color: var(--gold); }
 .account-page .stack-form .btn--whatsapp:hover, .info-page .btn--whatsapp:hover { background: #2a2016; }
 .page-hero .btn { background: var(--gold-metal); border-color: #b88d3a; color: #17110a; }
+
+/* ======================================================================
+   MAISON — FINISHING PASS
+   ====================================================================== */
+
+/* Product page: the photo column stays in view while the details scroll */
+@media (min-width: 860px) {
+  .detail { align-items: start; }
+  .gallery { position: sticky; top: 24px; }
+}
+
+/* Make it a pair: framed studio thumbnails, balanced layout, room under the heading */
+.bundle .section-title, .pdp-page > .section .section-title { margin-bottom: 30px; }
+.bundle-box { display: flex; align-items: center; justify-content: space-between; gap: 32px 48px; flex-wrap: wrap; }
+.bundle-items { flex: 1 1 520px; justify-content: center; align-items: center; }
+.bundle-item { display: grid; justify-items: center; gap: 8px; text-align: center; }
+.bundle-thumb { display: block; width: 170px; aspect-ratio: 1; padding: 10%; border: 1px solid var(--hair); border-radius: 2px; isolation: isolate; overflow: hidden; }
+.bundle-thumb img, .bundle-item .bundle-thumb img { width: 100%; height: 100%; object-fit: contain; border: 0; border-radius: 0; background: transparent !important; mix-blend-mode: multiply !important; transition: transform .5s var(--ease); }
+a.bundle-item:hover .bundle-thumb img { transform: scale(1.05); }
+.bundle-item span:not(.bundle-thumb) { max-width: 200px; font-size: 13px; line-height: 1.45; }
+.bundle-item b { font-family: var(--display); font-size: 1.3rem; font-weight: 600; }
+.bundle-plus { flex: none; width: 34px; height: 34px; padding: 7px; border: 1px solid var(--hair); border-radius: 50%; }
+.bundle-total { flex: 0 1 300px; padding-inline-start: 40px; border-inline-start: 1px solid var(--hair); }
+.bundle-total .btn--cart { width: 100%; }
+
+/* Home sign-off: monogram, tagline, gold rules */
+.lux-promise { padding-block: 88px 80px; }
+.lux-sign-mark { display: block; width: 74px; height: auto; margin: 0 auto 4px; opacity: .92; }
+.lux-sign::before { margin-top: 18px; }
+
+/* Phone tab bar: espresso with gold, like the header */
+@media (max-width: 700px) {
+  .bottom-nav { background: rgb(16 12 8 / .96); border-top: 1px solid var(--hair); box-shadow: 0 -10px 30px rgb(0 0 0 / .25); backdrop-filter: blur(8px); }
+  .bottom-nav a, .bottom-nav button.nav-menu { color: #a89c88; }
+  .bottom-nav a[aria-current="page"], .bottom-nav button.nav-menu[aria-expanded="true"] { color: #f7f1e6; }
+  .bottom-nav a[aria-current="page"] svg, .bottom-nav button.nav-menu[aria-expanded="true"] svg { color: var(--gold); }
+  .bottom-nav b { letter-spacing: .04em; }
+}
+
+@media (max-width: 700px) {
+  .bundle-box { display: grid; gap: 22px; }
+  .bundle-items { flex: none; }
+  .bundle-thumb { width: 116px; }
+  .bundle-item span:not(.bundle-thumb) { font-size: 12px; }
+  .bundle-plus { width: 28px; height: 28px; padding: 5px; }
+  .bundle-total { padding: 18px 0 0; border-inline-start: 0; border-top: 1px solid var(--hair); text-align: center; }
+  .lux-promise { padding-block: 60px 56px; }
+  .lux-sign-mark { width: 58px; }
+}
+.bundle-items { align-items: flex-start; }
+.bundle-plus { align-self: flex-start; margin-top: 68px; }
+@media (max-width: 700px) { .bundle-plus { margin-top: 44px; } }
+@media (max-width: 700px) {
+  .buy-bar { background: #17110b; border-top: 1px solid var(--hair); box-shadow: 0 -10px 30px rgb(0 0 0 / .2); }
+  .buy-bar-price b { color: #f7f1e6; }
+  .buy-bar-price small { color: #e3c47d; }
+  .buy-bar-price del { color: #8f8370; }
+  .buy-bar .btn--cart { background: transparent; border-color: rgb(201 161 74 / .6); color: #f7f1e6; }
+  .buy-bar .btn--cart:hover { border-color: var(--gold); }
+}
