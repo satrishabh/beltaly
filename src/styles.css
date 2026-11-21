@@ -1556,3 +1556,59 @@ a.bundle-item:hover .bundle-thumb img { transform: scale(1.05); }
   .buy-bar .btn--cart { background: transparent; border-color: rgb(201 161 74 / .6); color: #f7f1e6; }
   .buy-bar .btn--cart:hover { border-color: var(--gold); }
 }
+
+/* ======================================================================
+   MAISON — CHECKOUT LAYOUT & EASIER FORM
+   ====================================================================== */
+
+/* Sticky items clear the pinned 77px header */
+@media (min-width: 860px) { .gallery { top: 100px; } }
+
+/* Three areas: bag + form on the left, price details alone on the right.
+   Only the right column is sticky, so it can never cover the form. */
+.cart-layout { grid-template-columns: minmax(0, 1.45fr) minmax(320px, 1fr); grid-template-areas: "items aside" "flow aside"; gap: 28px 48px; }
+.cart-items { grid-area: items; }
+.checkout-aside { grid-area: aside; position: sticky; top: 100px; align-self: start; }
+.checkout-flow { grid-area: flow; display: grid; gap: 24px; }
+.checkout-flow:empty { display: none; }
+.summary-box { position: static; }
+.secure-note { margin: 16px 0 0; }
+
+/* Form: bigger fields and labels, 16px text (no zoom-in on iPhone), clear focus and error states */
+.checkout.panel { padding: 30px; }
+.checkout h3 { margin-bottom: 20px; }
+.form-grid { gap: 18px 16px; }
+.form-grid label { gap: 8px; font-size: 12px; color: var(--ink-muted); }
+html:not([lang="en"]) .form-grid label { font-size: 14px; }
+.checkout input:not([type="checkbox"]):not([type="radio"]), .checkout textarea { width: 100%; min-height: 50px; padding: 13px 15px; border: 1px solid var(--line-strong); background: #fffdf8; color: var(--ink); font-size: 16px; font-weight: 500; line-height: 1.4; }
+.checkout textarea { min-height: 96px; resize: vertical; }
+.checkout input::placeholder, .checkout textarea::placeholder { color: #a39a8c; font-weight: 400; }
+.checkout input:user-invalid, .checkout textarea:user-invalid { border-color: var(--danger); box-shadow: 0 0 0 3px rgb(180 50 40 / .12); }
+.phone-field { display: flex; align-items: stretch; }
+.phone-field > span { display: grid; place-items: center; padding: 0 14px; border: 1px solid var(--line-strong); border-inline-end: 0; border-radius: 2px 0 0 2px; background: var(--surface); color: var(--ink-muted); font-size: 15px; font-weight: 600; letter-spacing: 0; }
+.phone-field input { border-radius: 0 2px 2px 0 !important; }
+[dir="rtl"] .phone-field > span { border-radius: 0 2px 2px 0; }
+[dir="rtl"] .phone-field input { border-radius: 2px 0 0 2px !important; }
+.remember { margin-top: 18px; font-size: 14px; cursor: pointer; }
+.remember input { width: 18px; height: 18px; }
+.checkout fieldset { margin: 22px 0 14px; }
+.checkout fieldset label { min-height: 54px; font-size: 15px; font-weight: 600; color: var(--ink); }
+.checkout fieldset input { width: 18px; height: 18px; flex: none; }
+.checkout .btn--buy { width: 100%; margin-top: 8px; font-size: 15px; }
+.checkout .error:empty { display: none; }
+
+@media (max-width: 859px) {
+  .cart-layout { grid-template-columns: 1fr; grid-template-areas: "items" "aside" "flow"; gap: 24px; }
+  .checkout-aside { position: static; }
+}
+@media (max-width: 700px) {
+  .checkout.panel { padding: 22px 18px; }
+  .form-grid { grid-template-columns: 1fr 1fr; gap: 16px 12px; }
+  .phone-field > span { padding: 0 10px; font-size: 14px; }
+}
+@media (max-width: 380px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .checkout-aside, .gallery { position: static; }
+}

@@ -64,7 +64,7 @@ export default function Checkout({ cartItems, onUpdateQuantity, onRemove, onOrde
     <div className="wrap section">
       <h1 className="page-title">{order ? t('Send your order') : `${t('Bag')} (${itemsLabel})`}</h1>
       <div className="cart-layout">
-        <div aria-live="polite">
+        <div className="cart-items" aria-live="polite">
           {cartItems.length === 0 && !order && <div className="empty panel"><ShoppingBag size={34} /><p>{t('Your bag is waiting for a good fit.')}</p><Link className="btn" to="shop">{t('Explore the collection')} <ArrowUpRight size={15} /></Link></div>}
           {cartItems.map((item) => {
             const product = getProduct(item.productId);
@@ -89,8 +89,8 @@ export default function Checkout({ cartItems, onUpdateQuantity, onRemove, onOrde
           })}
         </div>
 
-        <div>
-          {cartItems.length > 0 && <>
+        {cartItems.length > 0 && (
+          <aside className="checkout-aside">
           <div className="summary-box">
             <h3>{t('Price details')}</h3>
             <div className="total-row"><span>{t('Price')} ({itemsLabel})</span><span>{money(mrpTotal)}</span></div>
@@ -103,17 +103,20 @@ export default function Checkout({ cartItems, onUpdateQuantity, onRemove, onOrde
             <p className="hint">{t('Inclusive of all taxes')}.{sum.subtotal > 0 && sum.shipping > 0 ? ` ${t('Add {amount} more for free delivery.', { amount: money(settings.freeShippingAbove - sum.subtotal) })}` : ''}</p>
           </div>
           <p className="secure-note"><ShieldCheck size={16} /> {t('No online payment is taken on this site. You pay on delivery or after the store confirms on WhatsApp.')}</p>
-          </>}
+          </aside>
+        )}
+
+        <div className="checkout-flow">
 
           {cartItems.length > 0 && (
             <form className="checkout panel" onSubmit={submit}>
               <h3>{t('Delivery address')}</h3>
               {!storeReady && <p className="account-panel hint">Ordering opens once the store adds its WhatsApp number in <code>src/data/settings.json</code>. You can still try the form.</p>}
               <div className="form-grid">
-                <label>{t('Name')}<input autoComplete="name" required maxLength={100} {...field('name')} /></label>
-                <label>{t('Mobile number')}<input type="tel" inputMode="numeric" autoComplete="tel-national" pattern="[0-9]{10}" maxLength={10} required placeholder={t('10 digits')} {...field('phone')} /></label>
+                <label className="full">{t('Name')}<input autoComplete="name" autoCapitalize="words" enterKeyHint="next" required maxLength={100} {...field('name')} /></label>
+                <label>{t('Mobile number')}<span className="phone-field"><span aria-hidden="true">+91</span><input type="tel" inputMode="numeric" autoComplete="tel-national" enterKeyHint="next" pattern="[0-9]{10}" maxLength={10} required placeholder={t('10 digits')} {...field('phone')} /></span></label>
+                <label>{t('Pincode')}<input autoComplete="postal-code" inputMode="numeric" enterKeyHint="next" pattern="[0-9]{6}" maxLength={6} required placeholder={t('6-digit pincode')} {...field('pincode')} /></label>
                 <label className="full">{t('Delivery address')}<textarea autoComplete="street-address" required rows={3} maxLength={600} {...field('address')} /></label>
-                <label>{t('Pincode')}<input autoComplete="postal-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} required placeholder={t('6-digit pincode')} {...field('pincode')} /></label>
               </div>
               <label className="remember"><input type="checkbox" checked={remember} onChange={(event) => setRemember(event.target.checked)} /> {t('Remember my details on this device')}</label>
               <fieldset>
