@@ -1825,3 +1825,15 @@ html:not([lang="en"]) .marketplaces--home, html:not([lang="en"]) .marketplaces--
   .marketplaces--home > span { flex-basis: 100%; margin: 0 0 6px; text-align: center; }
   .marketplaces--home a { padding-inline: 14px; }
 }
+
+/* ======================================================================
+   MAISON — PRODUCT PRICE LINE
+   ====================================================================== */
+.price-block { padding-block: 20px 18px; }
+.price-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; }
+.price-now { font-family: var(--display); font-size: clamp(2.4rem, 3.4vw, 2.9rem); font-weight: 600; line-height: 1; letter-spacing: 0; }
+.price-mrp { display: inline; margin: 0; font-size: 14px; color: var(--ink-subtle); }
+.price-mrp del { text-decoration-color: rgb(120 110 95 / .7); }
+.price-off { margin: 0; padding: 4px 10px; border: 1px solid var(--hair); font-size: 11.5px !important; font-weight: 700; letter-spacing: .16em !important; text-transform: uppercase; }
+html:not([lang="en"]) .price-off { letter-spacing: 0 !important; text-transform: none; font-size: 13px !important; }
+.price-block .hint { margin-top: 10px; font-size: 12.5px; }

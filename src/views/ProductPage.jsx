@@ -119,9 +119,10 @@ export default function ProductPage({ product, saved, onToggleSaved, onAddToCart
           </div>
 
           <div className="price-block">
-            {off > 0 && <span className="price-off">-{off}%</span>}
-            <span className="price-now">{money(product.price)}</span>
-            {off > 0 && <span className="price-mrp">{t('M.R.P.:')} <del>{money(product.mrp)}</del></span>}
+            <div className="price-line">
+              <span className="price-now">{money(product.price)}</span>
+              {off > 0 && <><span className="price-mrp">{t('M.R.P.:')} <del>{money(product.mrp)}</del></span><span className="price-off">{t('{percent}% off', { percent: off })}</span></>}
+            </div>
             <p className="hint">{t('Inclusive of all taxes')}</p>
           </div>
 
