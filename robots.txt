@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /cart
+Disallow: /orders
+Disallow: /saved
+Disallow: /account
+
+Sitemap: https://www.beltaly.in/sitemap.xml
